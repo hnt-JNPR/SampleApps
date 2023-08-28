@@ -1,7 +1,6 @@
 package com.example.sampleappwakeup.application
 
 import android.app.Application
-import android.content.Context
 import android.content.Intent
 import android.os.Build
 import android.util.Log
@@ -24,7 +23,7 @@ class MainApplication : Application(), MonitorNotifier {
     private val TAG : String = "SampleAppWakeUp"
     private lateinit var mainApplication : MainApplication
     //private var beaconManager : BeaconManager? = null
-    private lateinit var beaconManager :BeaconManager
+    private lateinit var beaconManager: BeaconManager
 
     val NotificationHandler = NotificationHandler()
     val AltBeaconUtil = AltBeaconUtil()
@@ -49,7 +48,7 @@ class MainApplication : Application(), MonitorNotifier {
         NotificationHandler.sendNotification(applicationContext, "Found Beacon " + region.uniqueId)
         if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q){
             // Increase beacon scan interval for reducing scan frequency.
-            AltBeaconUtil.increaseBeaconScanPeriod(mainApplication.getBeconmanager()!!)
+            AltBeaconUtil.increaseBeaconScanPeriod(mainApplication.getBeconmanager())
             //Starting mist location SDK as foreground service
             val intent = Intent(applicationContext, LocationForegroundService::class.java)
             NotificationHandler.sendNotification(applicationContext,"start foreground mist beacon service")
@@ -70,8 +69,9 @@ class MainApplication : Application(), MonitorNotifier {
         NotificationHandler.sendNotification(applicationContext,"Switched from seeing/not seeing beacons: "+ state)
     }
 
-    fun getBeconmanager() : BeaconManager? {
+    fun getBeconmanager() : BeaconManager {
         //beaconManager = BeaconManager.getInstanceForApplication(applicationContext)
         return beaconManager
     }
+
 }
