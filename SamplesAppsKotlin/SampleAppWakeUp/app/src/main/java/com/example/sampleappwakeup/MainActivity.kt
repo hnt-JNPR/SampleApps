@@ -8,13 +8,13 @@ import org.altbeacon.beacon.BeaconManager
 
 class MainActivity : PermissionHandlerActivity(){
     private lateinit var mainApplication : MainApplication
-    private val MainApplication = MainApplication()
+    //private val MainApplication = MainApplication()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
-        mainApplication = MainApplication.getApplication()
-
+        //mainApplication = MainApplication.getApplication()
+        mainApplication = (application as MainApplication)
         checkPermissions()
         BeaconManager.setDebug(true)
     }

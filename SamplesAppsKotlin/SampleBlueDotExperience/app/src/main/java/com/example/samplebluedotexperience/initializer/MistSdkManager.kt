@@ -32,8 +32,8 @@ class MistSdkManager {
     }
 
     fun init(orgSecret:String, indoorLocationCallback: IndoorLocationCallback, virtualBeaconCallback: VirtualBeaconCallback?){
-        if(orgSecret!=null && !orgSecret.isEmpty()){
-            Log.d("","Sample Blue Dot Init"+orgSecret)
+        if(orgSecret.isNotEmpty()){
+            Log.d("", "Sample Blue Dot Init$orgSecret")
             this.orgSecret=orgSecret
             this.indoorLocationCallback=indoorLocationCallback
             if (virtualBeaconCallback != null) {
@@ -47,7 +47,7 @@ class MistSdkManager {
 
     fun startMistSdk(){
         if(indoorLocationManager==null){
-            Log.d("","IndoorLocationManager Start"+orgSecret)
+            Log.d("", "IndoorLocationManager Start$orgSecret")
             indoorLocationManager = IndoorLocationManager.getInstance(contextWeakReference?.get(),orgSecret)
             indoorLocationManager?.setVirtualBeaconCallback(virtualBeaconCallback)
             indoorLocationManager?.start(indoorLocationCallback)

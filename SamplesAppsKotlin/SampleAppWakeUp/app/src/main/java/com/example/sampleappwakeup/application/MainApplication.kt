@@ -36,7 +36,7 @@ class MainApplication : Application(), MonitorNotifier {
     }
 
     fun getApplication() : MainApplication {
-        mainApplication = this
+        //mainApplication = this
         return mainApplication
     }
 

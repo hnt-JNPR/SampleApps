@@ -34,11 +34,11 @@ class MapFragment : Fragment(), IndoorLocationCallback {
 
     val TAG = MapFragment::class.java.simpleName
 
-    private var PERMISSION_REQUEST_BLUETOOTH_LOCATION : Int = 1
+    private var permissionRequestBluetoothLocation : Int = 1
 
-    private val REQUEST_ENABLE_BLUETOOTH : Int = 1
+    private val requestEnableBluetooth : Int = 1
 
-    private val SDK_TOKEN : String = "sdktoken"
+    private val sdkToken : String = "sdktoken"
 
     private lateinit var mainApplication : Application
 
@@ -54,13 +54,13 @@ class MapFragment : Fragment(), IndoorLocationCallback {
 
     private var scaleFactorCalled : Boolean = true
 
-    private var floorImageLeftmargin : Float = 0.0F
+    private var floorImageLeftMargin : Float = 0.0F
 
-    private var floorImageTopmargin : Float = 0.0F
+    private var floorImageTopMargin : Float = 0.0F
 
     //private lateinit var unbinder: Unbinder
 
-    lateinit var currentmap : MistMap
+    private lateinit var currentmap : MistMap
 
     //@BindView(R.id.floorplanbluedot)
     //var floorplanBluedotView : FrameLayout = binding.floorplanbluedot
@@ -76,7 +76,7 @@ class MapFragment : Fragment(), IndoorLocationCallback {
 
     fun newInstance(sdkToken: String): MapFragment {
         val bundle = Bundle()
-        bundle.putString(SDK_TOKEN, sdkToken)
+        bundle.putString(sdkToken, sdkToken)
         val mapFragment = MapFragment()
         mapFragment.arguments = bundle
         return mapFragment
@@ -92,7 +92,7 @@ class MapFragment : Fragment(), IndoorLocationCallback {
      * onStop
      */
 
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         //val view:View=inflater.inflate(R.layout.map_fragment,container,false)
         _binding = MapFragmentBinding.inflate(inflater,container,false)
         //unbinder = ButterKnife.bind(this,view)
@@ -106,7 +106,7 @@ class MapFragment : Fragment(), IndoorLocationCallback {
             mainApplication = requireActivity().application
         }
         if (arguments != null) {
-            orgSecret = requireArguments().getString(SDK_TOKEN)!!
+            orgSecret = requireArguments().getString(sdkToken)!!
         }
         mistSdkManager = MistSdkManager().getInstance(mainApplication.applicationContext)!!
     }
@@ -140,7 +140,7 @@ class MapFragment : Fragment(), IndoorLocationCallback {
                 val permissionToRequest =permissionRequired.filter {
                     ContextCompat.checkSelfPermission(requireActivity(),it)!= PackageManager.PERMISSION_GRANTED }.toTypedArray()
                 if(permissionToRequest.isNotEmpty()){
-                    requestPermissions(arrayOf(android.Manifest.permission.BLUETOOTH_CONNECT, android.Manifest.permission.BLUETOOTH_SCAN, android.Manifest.permission.ACCESS_FINE_LOCATION),PERMISSION_REQUEST_BLUETOOTH_LOCATION)
+                    requestPermissions(arrayOf(android.Manifest.permission.BLUETOOTH_CONNECT, android.Manifest.permission.BLUETOOTH_SCAN, android.Manifest.permission.ACCESS_FINE_LOCATION),permissionRequestBluetoothLocation)
                 }
             }
             builder.show()
@@ -150,7 +150,7 @@ class MapFragment : Fragment(), IndoorLocationCallback {
     override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<out String>, grantResults: IntArray) {
         if (activity != null) {
             when (requestCode) {
-                PERMISSION_REQUEST_BLUETOOTH_LOCATION ->
+                permissionRequestBluetoothLocation ->
                     if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                         Log.d(TAG, "fine location permission granted !!")
                         checkIfBluetoothEnabled()
@@ -175,9 +175,9 @@ class MapFragment : Fragment(), IndoorLocationCallback {
             return
         }
         val bluetoothAdapter : BluetoothAdapter = BluetoothAdapter.getDefaultAdapter()
-        if(!(bluetoothAdapter!=null && bluetoothAdapter.isEnabled() && bluetoothAdapter.state== BluetoothAdapter.STATE_ON)){
+        if(!(bluetoothAdapter!=null && bluetoothAdapter.isEnabled && bluetoothAdapter.state== BluetoothAdapter.STATE_ON)){
             val enableBtIntent = Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE)
-            startActivityForResult(enableBtIntent, REQUEST_ENABLE_BLUETOOTH)
+            startActivityForResult(enableBtIntent, requestEnableBluetooth)
         }
     }
 
@@ -320,8 +320,8 @@ class MapFragment : Fragment(), IndoorLocationCallback {
                     if (!scaleFactorCalled && (scaleXFactor == 0.0 || scaleYFactor == 0.0)) {
                         setupScaleFactorForFloorplan()
                     }
-                    val leftMargin: Float = floorImageLeftmargin + (xPos - binding.floorplanbluedot.width) / 2
-                    val topMargin: Float = floorImageTopmargin + (yPos - binding.floorplanbluedot.height) / 2
+                    val leftMargin: Float = floorImageLeftMargin + (xPos - binding.floorplanbluedot.width) / 2
+                    val topMargin: Float = floorImageTopMargin + (yPos - binding.floorplanbluedot.height) / 2
                     binding.floorplanbluedot.x = leftMargin
                     binding.floorplanbluedot.y = topMargin
                 }
@@ -334,8 +334,8 @@ class MapFragment : Fragment(), IndoorLocationCallback {
             val vto: ViewTreeObserver = binding.floorplanImage.viewTreeObserver
             vto.addOnGlobalLayoutListener {
                 if (binding.floorplanImage!= null) {
-                    floorImageLeftmargin= binding.floorplanImage.left.toFloat()
-                    floorImageTopmargin = binding.floorplanImage.top.toFloat()
+                    floorImageLeftMargin= binding.floorplanImage.left.toFloat()
+                    floorImageTopMargin = binding.floorplanImage.top.toFloat()
                     if (binding.floorplanImage.drawable != null) {
                         scaleXFactor = binding.floorplanImage.width / binding.floorplanImage.drawable.intrinsicWidth.toDouble()
                         scaleYFactor = binding.floorplanImage.height / binding.floorplanImage.drawable.intrinsicHeight.toDouble()

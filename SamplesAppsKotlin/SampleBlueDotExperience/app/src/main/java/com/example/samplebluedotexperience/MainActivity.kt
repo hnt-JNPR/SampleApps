@@ -7,8 +7,9 @@ import com.example.samplebluedotexperience.fragment.MapFragment
 
 class MainActivity : AppCompatActivity() {
     private lateinit var binding : ActivityMainBinding
-    val contants = Constants()
-    private val ORG_SECRET :String = contants.org_secret
+    private val constants = Constants()
+    private val orgSecret :String = constants.orgSecret
+    private val MapFragment = MapFragment()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -17,11 +18,11 @@ class MainActivity : AppCompatActivity() {
         setContentView(binding.root)
 
         // Load BlueDot Map screen in fragment, permissions are checked inside this fragment.
-        setUPMapFragment(ORG_SECRET)
+        setUPMapFragment(orgSecret)
     }
 
     private fun setUPMapFragment(ORG_SECRET:String) {
-        val MapFragment = MapFragment()
+        //val mapFragment = MapFragment()
         val mapFragment = supportFragmentManager.findFragmentByTag(MapFragment.TAG)
         if (mapFragment == null) {
             supportFragmentManager.beginTransaction().replace(R.id.frame_fragment, MapFragment.newInstance(ORG_SECRET), MapFragment.TAG).addToBackStack(MapFragment.TAG).commit()

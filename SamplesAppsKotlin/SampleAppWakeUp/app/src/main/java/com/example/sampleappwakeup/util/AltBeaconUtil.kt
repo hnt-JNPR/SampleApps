@@ -46,7 +46,8 @@ class AltBeaconUtil {
         beaconManager.foregroundBetweenScanPeriod = Constants.BEACON_SCAN_INTERVAL_LOCATION_SDK_NOT_RUNNING_MS
         beaconManager.backgroundScanPeriod = Constants.BEACON_PER_SCAN_DURATION
         beaconManager.foregroundScanPeriod = Constants.BEACON_PER_SCAN_DURATION
-        val subOrgId : String = Constants.ORG_ID.substring(0,Constants.ORG_ID.length - 2)
+        //val subOrgId : String = Constants.ORG_ID.substring(0,Constants.ORG_ID.length - 2)
+        val subOrgId: String = Constants.ORG_ID.substring(0, (Constants.ORG_ID.length - 2))
         regions.add(Region("wakeup-beacons1", Identifier.parse(Constants.ORG_ID), null, null))
         regions.add(Region("wakeup-beacons2", Identifier.parse(subOrgId + "00"), null, null))
         regions.add(Region("wakeup-beacons3", Identifier.parse(subOrgId + "01"), null, null))
