@@ -19,20 +19,18 @@ import org.altbeacon.beacon.Region
 
 class AltBeaconUtil {
 
-    var regions = ArrayList<Region>()
-    val Constants = Constants()
+    private var regions = ArrayList<Region>()
+    private val constants = Constants()
 
     fun startBeaconMonitor(beaconManager: BeaconManager, context: Context){
         beaconManager.beaconParsers.clear()
         beaconManager.beaconParsers.add(BeaconParser().setBeaconLayout("m:2-3=0215,i:4-19,i:20-21,i:22-23,p:24-24"))
         beaconManager.setEnableScheduledScanJobs(true)
         val intent1 = Intent(context, MainActivity::class.java)
-        val pendingIntent : PendingIntent
-        if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.M){
-            pendingIntent = PendingIntent.getActivity(context, 0, intent1, PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE)
-        }
-        else{
-            pendingIntent = PendingIntent.getActivity(context, 0, intent1, PendingIntent.FLAG_UPDATE_CURRENT )
+        val pendingIntent : PendingIntent = if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.M){
+            PendingIntent.getActivity(context, 0, intent1, PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE)
+        } else{
+            PendingIntent.getActivity(context, 0, intent1, PendingIntent.FLAG_UPDATE_CURRENT )
         }
         /** Create foreground service for alt beacon scanning. */
         /** Create foreground service for alt beacon scanning.  */
@@ -42,27 +40,28 @@ class AltBeaconUtil {
                 .build()
         beaconManager.addMonitorNotifier((context as MonitorNotifier))
         beaconManager.enableForegroundServiceScanning(notification,71)
-        beaconManager.backgroundBetweenScanPeriod = Constants.BEACON_SCAN_INTERVAL_LOCATION_SDK_NOT_RUNNING_MS
-        beaconManager.foregroundBetweenScanPeriod = Constants.BEACON_SCAN_INTERVAL_LOCATION_SDK_NOT_RUNNING_MS
-        beaconManager.backgroundScanPeriod = Constants.BEACON_PER_SCAN_DURATION
-        beaconManager.foregroundScanPeriod = Constants.BEACON_PER_SCAN_DURATION
-        //val subOrgId : String = Constants.ORG_ID.substring(0,Constants.ORG_ID.length - 2)
-        val subOrgId: String = Constants.ORG_ID.substring(0, (Constants.ORG_ID.length - 2))
-        regions.add(Region("wakeup-beacons1", Identifier.parse(Constants.ORG_ID), null, null))
-        regions.add(Region("wakeup-beacons2", Identifier.parse(subOrgId + "00"), null, null))
-        regions.add(Region("wakeup-beacons3", Identifier.parse(subOrgId + "01"), null, null))
-        regions.add(Region("wakeup-beacons4", Identifier.parse(subOrgId + "02"), null, null))
-        regions.add(Region("wakeup-beacons5", Identifier.parse(subOrgId + "03"), null, null))
-        regions.add(Region("wakeup-beacons6", Identifier.parse(subOrgId + "04"), null, null))
-        regions.add(Region("wakeup-beacons7", Identifier.parse(subOrgId + "05"), null, null))
-        regions.add(Region("wakeup-beacons8", Identifier.parse(subOrgId + "06"), null, null))
-        regions.add(Region("wakeup-beacons9", Identifier.parse(subOrgId + "07"), null, null))
-        regions.add(Region("wakeup-beacons10", Identifier.parse(subOrgId + "08"), null, null))
-        regions.add(Region("wakeup-beacons11", Identifier.parse(subOrgId + "09"), null, null))
-        regions.add(Region("wakeup-beacons12", Identifier.parse(subOrgId + "0a"), null, null))
-        regions.add(Region("wakeup-beacons13", Identifier.parse(subOrgId + "0b"), null, null))
-        regions.add(Region("wakeup-beacons14", Identifier.parse(subOrgId + "0c"), null, null))
-        regions.add(Region("wakeup-beacons15", Identifier.parse(subOrgId + "0d"), null, null))
+        beaconManager.backgroundBetweenScanPeriod = constants.beaconScanIntervalLocationSdkNotRunningMs
+        beaconManager.foregroundBetweenScanPeriod = constants.beaconScanIntervalLocationSdkNotRunningMs
+        beaconManager.backgroundScanPeriod = constants.beaconPerScanDuration
+        beaconManager.foregroundScanPeriod = constants.beaconPerScanDuration
+        val subOrgId: String = constants.orgId.substring(0, (constants.orgId.length - 2))
+        regions.apply {add(Region("wakeup-beacons1", Identifier.parse(constants.orgId), null, null))
+            add(Region("wakeup-beacons2", Identifier.parse(subOrgId + "00"), null, null))
+            add(Region("wakeup-beacons3", Identifier.parse(subOrgId + "01"), null, null))
+            add(Region("wakeup-beacons4", Identifier.parse(subOrgId + "02"), null, null))
+            add(Region("wakeup-beacons5", Identifier.parse(subOrgId + "03"), null, null))
+            add(Region("wakeup-beacons6", Identifier.parse(subOrgId + "04"), null, null))
+            add(Region("wakeup-beacons7", Identifier.parse(subOrgId + "05"), null, null))
+            add(Region("wakeup-beacons8", Identifier.parse(subOrgId + "06"), null, null))
+            add(Region("wakeup-beacons9", Identifier.parse(subOrgId + "07"), null, null))
+            add(Region("wakeup-beacons10", Identifier.parse(subOrgId + "08"), null, null))
+            add(Region("wakeup-beacons11", Identifier.parse(subOrgId + "09"), null, null))
+            add(Region("wakeup-beacons12", Identifier.parse(subOrgId + "0a"), null, null))
+            add(Region("wakeup-beacons13", Identifier.parse(subOrgId + "0b"), null, null))
+            add(Region("wakeup-beacons14", Identifier.parse(subOrgId + "0c"), null, null))
+            add(Region("wakeup-beacons15", Identifier.parse(subOrgId + "0d"), null, null))
+        }
+
         Toast.makeText(context,"Monitoring started ",Toast.LENGTH_SHORT).show()
         for (region in regions) {
             beaconManager.startMonitoring(region)
@@ -74,7 +73,7 @@ class AltBeaconUtil {
      * frequently. We call it once we are starting location sdk.
      */
     fun increaseBeaconScanPeriod(beaconManager: BeaconManager){
-        beaconManager.backgroundBetweenScanPeriod = Constants.BEACON_SCAN_INTERVAL_LOCATION_SDK_RUNNING_MS
+        beaconManager.backgroundBetweenScanPeriod = constants.beaconScanIntervalLocationSdkRunningMs
         try {
             beaconManager.updateScanPeriods()
         } catch (e: RemoteException) {
@@ -87,7 +86,7 @@ class AltBeaconUtil {
      * frequently. We call it once we are stopping location sdk.
      */
     fun decreaseBeaconScanPeriod(beaconManager: BeaconManager){
-        beaconManager.backgroundBetweenScanPeriod = Constants.BEACON_SCAN_INTERVAL_LOCATION_SDK_NOT_RUNNING_MS
+        beaconManager.backgroundBetweenScanPeriod = constants.beaconScanIntervalLocationSdkNotRunningMs
         try {
             beaconManager.updateScanPeriods()
         } catch (e: RemoteException) {

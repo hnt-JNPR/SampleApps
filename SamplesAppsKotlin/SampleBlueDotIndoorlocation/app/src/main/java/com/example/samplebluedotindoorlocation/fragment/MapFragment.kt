@@ -9,7 +9,7 @@ import android.view.ViewGroup
 import android.view.ViewTreeObserver
 import androidx.fragment.app.Fragment
 import com.example.samplebluedotindoorlocation.databinding.MapFragmentBinding
-import com.example.samplebluedotindoorlocation.initializer.MistSdkmanager
+import com.example.samplebluedotindoorlocation.initializer.MistSdkManager
 import com.mist.android.ErrorType
 import com.mist.android.IndoorLocationCallback
 import com.mist.android.MistMap
@@ -23,11 +23,11 @@ class MapFragment : Fragment(),IndoorLocationCallback {
     private var _binding : MapFragmentBinding? = null
     private val binding get() = _binding!!
 
-    lateinit var mistSdkManager : MistSdkmanager
+    private lateinit var mistSdkManager : MistSdkManager
 
     val TAG = MapFragment::class.java.simpleName
 
-    private val SDK_TOKEN : String = "sdktoken"
+    private val sdkToken : String = "sdk-token"
 
     private lateinit var mainApplication : Application
 
@@ -43,33 +43,21 @@ class MapFragment : Fragment(),IndoorLocationCallback {
 
     private var scaleFactorCalled : Boolean = true
 
-    private var floorImageLeftmargin : Float = 0.0F
+    private var floorImageLeftMargin : Float = 0.0F
 
-    private var floorImageTopmargin : Float = 0.0F
+    private var floorImageTopMargin : Float = 0.0F
 
-    lateinit var currentmap : MistMap
+    private lateinit var currentMap : MistMap
 
-    //@BindView(R.id.floorplanbluedot)
-    //lateinit var floorplanBluedotView : FrameLayout
-
-    //@BindView(R.id.progress_bar)
-    //lateinit var progressBar: ProgressBar
-
-    //@BindView(R.id.floorplan_image)
-    //lateinit var floorPlanImage: ImageView
-
-    //@BindView(R.id.txt_error)
-    //lateinit var txtError : TextView
-
-    fun newInstance(sdkToken: String): MapFragment {
+    fun newInstance(sdktoken: String): MapFragment {
         val bundle = Bundle()
-        bundle.putString(SDK_TOKEN, sdkToken)
+        bundle.putString(sdkToken, sdktoken)
         val mapFragment = MapFragment()
         mapFragment.arguments = bundle
         return mapFragment
     }
 
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         //val view:View=inflater.inflate(R.layout.map_fragment,container,false)
         _binding = MapFragmentBinding.inflate(inflater,container,false)
         //unbinder = ButterKnife.bind(this,view)
@@ -83,9 +71,9 @@ class MapFragment : Fragment(),IndoorLocationCallback {
             mainApplication = requireActivity().application
         }
         if (arguments != null) {
-            orgSecret = requireArguments().getString(SDK_TOKEN)!!
+            orgSecret = requireArguments().getString(sdkToken)!!
         }
-        mistSdkManager = MistSdkmanager().getInstance(mainApplication.applicationContext)!!
+        mistSdkManager = MistSdkManager().getInstance(mainApplication.applicationContext)!!
     }
 
     override fun onStart() {
@@ -129,7 +117,7 @@ class MapFragment : Fragment(),IndoorLocationCallback {
         //Returns updated location of the mobile client (as a point (X, Y) measured in meters from the map origin, i.e., relative X, Y)
         if(activity !=null){
             requireActivity().runOnUiThread {
-                if (currentmap != null && addedMap) {
+                if (addedMap) {
                     renderBlueDot(relativeLocation)
                 }
             }
@@ -140,17 +128,17 @@ class MapFragment : Fragment(),IndoorLocationCallback {
         binding.floorplanImage.visibility = View.VISIBLE
         if(activity!=null){
             requireActivity().runOnUiThread {
-                if (binding.floorplanImage != null && binding.floorplanImage.drawable != null && point != null && addedMap) {
-                    // When rendering bluedot hiding old error text
+                if (binding.floorplanImage.drawable != null && point != null && addedMap) {
+                    // When rendering blue dot hiding old error text
                     binding.txtError.visibility = View.GONE
-                    val xPos: Float = convertCloudPointToFloorplanXScale(point.getX())
-                    val yPos: Float = convertCloudPointToFloorplanYScale(point.getY())
+                    val xPos: Float = convertCloudPointToFloorPlanXScale(point.x)
+                    val yPos: Float = convertCloudPointToFloorPlanYScale(point.y)
                     // If scaleX and scaleY are not defined, check again
                     if (!scaleFactorCalled && (scaleXFactor == 0.0 || scaleYFactor == 0.0)) {
-                        setupScaleFactorForFloorplan()
+                        setupScaleFactorForFloorPlan()
                     }
-                    val leftMargin: Float = floorImageLeftmargin + (xPos - binding.floorplanBluedot.width) / 2
-                    val topMargin: Float = floorImageTopmargin + (yPos - binding.floorplanBluedot.height) / 2
+                    val leftMargin: Float = floorImageLeftMargin + (xPos - binding.floorplanBluedot.width) / 2
+                    val topMargin: Float = floorImageTopMargin + (yPos - binding.floorplanBluedot.height) / 2
                     binding.floorplanBluedot.x = leftMargin
                     binding.floorplanBluedot.y = topMargin
                 }
@@ -162,10 +150,10 @@ class MapFragment : Fragment(),IndoorLocationCallback {
         // Returns update map for the mobile client as a []MSTMap object
         Log.d(TAG, "SampleBlueDot onMapUpdated called")
         floorPlanImageUrl = map!!.url
-        Log.d(TAG,"SampleBlueDot "+ floorPlanImageUrl)
+        Log.d(TAG, "SampleBlueDot $floorPlanImageUrl")
         // Set the current map
-        if(activity!=null && (binding.floorplanImage.drawable==null || this.currentmap == null || !this.currentmap.id.equals(map.id))){
-            this.currentmap = map
+        if(activity!=null && (binding.floorplanImage.drawable==null  || !this.currentMap.id.equals(map.id))){
+            this.currentMap = map
             requireActivity().runOnUiThread {
                 renderImage(floorPlanImageUrl)
             }
@@ -173,7 +161,7 @@ class MapFragment : Fragment(),IndoorLocationCallback {
     }
 
     private fun renderImage(floorPlanImageUrl: String?) {
-        Log.d(TAG,"In Piccaso")
+        Log.d(TAG,"In Picasso")
         addedMap = false
         binding.floorplanImage.visibility=View.VISIBLE
         Picasso.with(activity).load(floorPlanImageUrl).networkPolicy(NetworkPolicy.OFFLINE).into(binding.floorplanImage, object : Callback {
@@ -183,7 +171,7 @@ class MapFragment : Fragment(),IndoorLocationCallback {
                 binding.floorplanBluedot.visibility = View.VISIBLE
                 binding.progressBar.visibility = View.GONE
                 if (!scaleFactorCalled) {
-                    setupScaleFactorForFloorplan()
+                    setupScaleFactorForFloorPlan()
                 }
             }
 
@@ -195,7 +183,7 @@ class MapFragment : Fragment(),IndoorLocationCallback {
                             binding.progressBar.visibility = View.GONE
                             addedMap = true
                             if (!scaleFactorCalled) {
-                                setupScaleFactorForFloorplan()
+                                setupScaleFactorForFloorPlan()
                             }
                             Log.d(TAG,"Image downloaded from server successfully !!")
                         }
@@ -218,19 +206,15 @@ class MapFragment : Fragment(),IndoorLocationCallback {
         binding.txtError.text = errorMessage
     }
 
-    private fun setupScaleFactorForFloorplan() {
-        if(binding.floorplanImage!=null){
-            val vto: ViewTreeObserver = binding.floorplanImage.viewTreeObserver
-            vto.addOnGlobalLayoutListener {
-                if (binding.floorplanImage != null) {
-                    floorImageLeftmargin= binding.floorplanImage.left.toFloat()
-                    floorImageTopmargin = binding.floorplanImage.top.toFloat()
-                    if (binding.floorplanImage.drawable != null) {
-                        scaleXFactor = binding.floorplanImage.width / binding.floorplanImage.drawable.intrinsicWidth.toDouble()
-                        scaleYFactor = binding.floorplanImage.height / binding.floorplanImage.drawable.intrinsicHeight.toDouble()
-                        scaleFactorCalled = true
-                    }
-                }
+    private fun setupScaleFactorForFloorPlan() {
+        val vto: ViewTreeObserver = binding.floorplanImage.viewTreeObserver
+        vto.addOnGlobalLayoutListener {
+            floorImageLeftMargin= binding.floorplanImage.left.toFloat()
+            floorImageTopMargin = binding.floorplanImage.top.toFloat()
+            if (binding.floorplanImage.drawable != null) {
+                scaleXFactor = binding.floorplanImage.width / binding.floorplanImage.drawable.intrinsicWidth.toDouble()
+                scaleYFactor = binding.floorplanImage.height / binding.floorplanImage.drawable.intrinsicHeight.toDouble()
+                scaleFactorCalled = true
             }
         }
     }
@@ -239,15 +223,15 @@ class MapFragment : Fragment(),IndoorLocationCallback {
      * converting the y point from meter's to pixel with the present scaling factor of the map
      * rendered in the imageview
      */
-    private fun convertCloudPointToFloorplanYScale(y: Double): Float {
-        return (y * scaleYFactor * currentmap.getPpm()).toFloat()
+    private fun convertCloudPointToFloorPlanYScale(y: Double): Float {
+        return (y * scaleYFactor * currentMap.ppm).toFloat()
     }
 
     /**
      * Converting the x point from meter's to pixel with the present scaling factor of the map
      * rendered in the imageview
      */
-    private fun convertCloudPointToFloorplanXScale(x: Double): Float {
-        return (x * scaleXFactor * currentmap.getPpm()).toFloat()
+    private fun convertCloudPointToFloorPlanXScale(x: Double): Float {
+        return (x * scaleXFactor * currentMap.ppm).toFloat()
     }
 }

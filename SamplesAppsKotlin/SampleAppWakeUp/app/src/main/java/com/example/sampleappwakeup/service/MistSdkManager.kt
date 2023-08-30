@@ -25,7 +25,7 @@ class MistSdkManager {
     private var orgSecret : String?=null
     private var mistSdkManager : MistSdkManager? = null
 
-    open fun getInstance(context: Context): MistSdkManager? {
+    fun getInstance(context: Context): MistSdkManager? {
         contextWeakReference = WeakReference<Context>(context)
         if (mistSdkManager == null) {
             mistSdkManager = MistSdkManager()
@@ -33,8 +33,8 @@ class MistSdkManager {
         return mistSdkManager
     }
 
-    open fun init(orgSecret: String?, indoorLocationCallback: IndoorLocationCallback?, virtualBeaconCallback: VirtualBeaconCallback?,context: Context) {
-        if (orgSecret != null && !orgSecret.isEmpty()) {
+    fun init(orgSecret: String?, indoorLocationCallback: IndoorLocationCallback?, virtualBeaconCallback: VirtualBeaconCallback?,context: Context) {
+        if (!orgSecret.isNullOrEmpty()) {
             this.orgSecret = orgSecret
             envType = orgSecret[0].toString()
             this.indoorLocationCallback = indoorLocationCallback
@@ -46,7 +46,7 @@ class MistSdkManager {
     }
 
     @Synchronized
-    open fun startMistSDK() {
+    fun startMistSDK() {
         if (indoorLocationManager == null) {
             indoorLocationManager=IndoorLocationManager.getInstance(contextWeakReference?.get(), orgSecret)
             val node=indoorLocationManager
@@ -57,13 +57,13 @@ class MistSdkManager {
         }
     }
 
-    open fun stopMistSDK() {
+    fun stopMistSDK() {
         if (indoorLocationManager != null) {
             indoorLocationManager!!.stop()
         }
     }
 
-    open fun destroy() {
+    fun destroy() {
         if (indoorLocationManager != null) {
             indoorLocationManager!!.stop()
             indoorLocationManager = null
@@ -71,7 +71,7 @@ class MistSdkManager {
     }
 
     @Synchronized
-    open fun restartMistSDK() {
+    fun restartMistSDK() {
         if (indoorLocationManager != null) {
             stopMistSDK()
             indoorLocationManager!!.setVirtualBeaconCallback(virtualBeaconCallback)

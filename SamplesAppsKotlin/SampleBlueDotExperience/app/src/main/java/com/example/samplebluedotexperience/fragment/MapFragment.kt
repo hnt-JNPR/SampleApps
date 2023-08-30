@@ -3,7 +3,6 @@ package com.example.samplebluedotexperience.fragment
 import android.app.AlertDialog
 import android.app.Application
 import android.bluetooth.BluetoothAdapter
-import android.content.DialogInterface
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.os.Build
@@ -13,6 +12,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.ViewTreeObserver
+import androidx.annotation.RequiresApi
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import com.example.samplebluedotexperience.databinding.MapFragmentBinding
@@ -38,7 +38,7 @@ class MapFragment : Fragment(), IndoorLocationCallback {
 
     private val requestEnableBluetooth : Int = 1
 
-    private val sdkToken : String = "sdktoken"
+    private val sdkToken : String = "sdk-token"
 
     private lateinit var mainApplication : Application
 
@@ -58,25 +58,11 @@ class MapFragment : Fragment(), IndoorLocationCallback {
 
     private var floorImageTopMargin : Float = 0.0F
 
-    //private lateinit var unbinder: Unbinder
+    private lateinit var currentMap : MistMap
 
-    private lateinit var currentmap : MistMap
-
-    //@BindView(R.id.floorplanbluedot)
-    //var floorplanBluedotView : FrameLayout = binding.floorplanbluedot
-
-    //@BindView(R.id.progress_bar)
-    //var progressBar: ProgressBar = binding.pro
-
-    //@BindView(R.id.floorplan_image)
-    //var floorPlanImage: ImageView = bindin
-
-    //@BindView(R.id.txt_error)
-    //var txtError : TextView = txt_error
-
-    fun newInstance(sdkToken: String): MapFragment {
+    fun newInstance(sdktoken: String): MapFragment {
         val bundle = Bundle()
-        bundle.putString(sdkToken, sdkToken)
+        bundle.putString(sdkToken, sdktoken)
         val mapFragment = MapFragment()
         mapFragment.arguments = bundle
         return mapFragment
@@ -111,6 +97,7 @@ class MapFragment : Fragment(), IndoorLocationCallback {
         mistSdkManager = MistSdkManager().getInstance(mainApplication.applicationContext)!!
     }
 
+    @RequiresApi(Build.VERSION_CODES.S)
     override fun onStart() {
         super.onStart()
         Log.d(TAG,"SampleBlueDot onStart called")
@@ -129,6 +116,7 @@ class MapFragment : Fragment(), IndoorLocationCallback {
         mistSdkManager.stopMistSdk()
     }
 
+    @RequiresApi(Build.VERSION_CODES.S)
     private fun showLocationBluetoothPermissionDialog(permissionRequired: MutableList<String>) {
         if(activity!=null){
             val builder = AlertDialog.Builder(activity)
@@ -161,9 +149,7 @@ class MapFragment : Fragment(), IndoorLocationCallback {
                         builder.setTitle("Functionality Limited")
                         builder.setMessage("Since location access has not been granted, this app will not be able to discover beacons when in the background")
                         builder.setPositiveButton(android.R.string.ok, null)
-                        builder.setOnDismissListener{
-                            fun onDismiss(dialog: DialogInterface?) {}
-                        }
+                        builder.setOnDismissListener{}
                         builder.show()
                     }
             }
@@ -175,7 +161,7 @@ class MapFragment : Fragment(), IndoorLocationCallback {
             return
         }
         val bluetoothAdapter : BluetoothAdapter = BluetoothAdapter.getDefaultAdapter()
-        if(!(bluetoothAdapter!=null && bluetoothAdapter.isEnabled && bluetoothAdapter.state== BluetoothAdapter.STATE_ON)){
+        if(!(bluetoothAdapter.isEnabled && bluetoothAdapter.state== BluetoothAdapter.STATE_ON)){
             val enableBtIntent = Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE)
             startActivityForResult(enableBtIntent, requestEnableBluetooth)
         }
@@ -183,15 +169,14 @@ class MapFragment : Fragment(), IndoorLocationCallback {
 
     private fun startSDK(orgSecret: String) {
         Log.d(TAG, "SampleBlueDot startSdk called$orgSecret")
-        if(orgSecret!=null){
-            mistSdkManager.init(orgSecret,this,null)
-            mistSdkManager.startMistSdk()
-        }
+        mistSdkManager.init(orgSecret,this,null)
+        mistSdkManager.startMistSdk()
     }
 
+    @RequiresApi(Build.VERSION_CODES.S)
     private fun checkPermissionAndStartSDK() {
         val permissionRequired : MutableList<String> = ArrayList()
-        if(Build.VERSION.SDK_INT>= Build.VERSION_CODES.M && activity!=null && requireActivity().checkSelfPermission(android.Manifest.permission.ACCESS_FINE_LOCATION)!= PackageManager.PERMISSION_GRANTED){
+        if(activity!=null && requireActivity().checkSelfPermission(android.Manifest.permission.ACCESS_FINE_LOCATION)!= PackageManager.PERMISSION_GRANTED){
             permissionRequired.add(android.Manifest.permission.ACCESS_FINE_LOCATION)
         }
         // For API 31 we need BLUETOOTH_SCAN permission
@@ -224,7 +209,7 @@ class MapFragment : Fragment(), IndoorLocationCallback {
         //Returns updated location of the mobile client (as a point (X, Y) measured in meters from the map origin, i.e., relative X, Y)
         if(activity !=null){
             requireActivity().runOnUiThread {
-                if (currentmap != null && addedMap) {
+                if (addedMap) {
                     renderBlueDot(relativeLocation)
                 }
             }
@@ -235,17 +220,17 @@ class MapFragment : Fragment(), IndoorLocationCallback {
         // Returns update map for the mobile client as a []MSTMap object
         Log.d(TAG, "SampleBlueDot onMapUpdated called")
         floorPlanImageUrl = map!!.url
-        Log.d(TAG,"SampleBlueDot "+ floorPlanImageUrl)
+        Log.d(TAG, "SampleBlueDot $floorPlanImageUrl")
         // Set the current map
-        if(activity!=null && (binding.floorplanImage.drawable==null || this.currentmap == null || !this.currentmap.id.equals(map.id))){
-            this.currentmap = map
+        if(activity!=null && (binding.floorplanImage.drawable==null || !this.currentMap.id.equals(map.id))){
+            this.currentMap = map
             requireActivity().runOnUiThread {
                 renderImage(floorPlanImageUrl)
             }
         }
     }
     override fun onError(errorType: ErrorType?, errorMessage: String?) {
-        Log.d(TAG,"SampleBlueDot onError called" + errorMessage + "errorType " + errorType)
+        Log.d(TAG,"SampleBlueDot onError called $errorMessage errorType $errorType")
         binding.floorplanbluedot.visibility = View.GONE
         binding.floorplanImage.visibility = View.GONE
         binding.progressBar.visibility = View.GONE
@@ -269,7 +254,7 @@ class MapFragment : Fragment(), IndoorLocationCallback {
      */
 
     private fun renderImage(floorPlanImageUrl: String?) {
-        Log.d(TAG,"In Piccaso")
+        Log.d(TAG,"In Picasso")
         addedMap = false
         binding.floorplanImage.visibility= View.VISIBLE
         Picasso.with(activity).load(floorPlanImageUrl).networkPolicy(NetworkPolicy.OFFLINE).into(binding.floorplanImage, object :
@@ -311,11 +296,11 @@ class MapFragment : Fragment(), IndoorLocationCallback {
         binding.floorplanImage.visibility = View.VISIBLE
         if(activity!=null){
             requireActivity().runOnUiThread {
-                if (binding.floorplanImage != null && binding.floorplanImage.drawable != null && point != null && addedMap) {
+                if (binding.floorplanImage.drawable != null && point != null && addedMap) {
                     // When rendering bluedot hiding old error text
                     binding.txtError.visibility = View.GONE
-                    val xPos: Float = convertCloudPointToFloorplanXScale(point.getX())
-                    val yPos: Float = convertCloudPointToFloorplanYScale(point.getY())
+                    val xPos: Float = convertCloudPointToFloorPlanXScale(point.x)
+                    val yPos: Float = convertCloudPointToFloorPlanYScale(point.y)
                     // If scaleX and scaleY are not defined, check again
                     if (!scaleFactorCalled && (scaleXFactor == 0.0 || scaleYFactor == 0.0)) {
                         setupScaleFactorForFloorplan()
@@ -330,18 +315,14 @@ class MapFragment : Fragment(), IndoorLocationCallback {
     }
 
     private fun setupScaleFactorForFloorplan(){
-        if(binding.floorplanImage!=null){
-            val vto: ViewTreeObserver = binding.floorplanImage.viewTreeObserver
-            vto.addOnGlobalLayoutListener {
-                if (binding.floorplanImage!= null) {
-                    floorImageLeftMargin= binding.floorplanImage.left.toFloat()
-                    floorImageTopMargin = binding.floorplanImage.top.toFloat()
-                    if (binding.floorplanImage.drawable != null) {
-                        scaleXFactor = binding.floorplanImage.width / binding.floorplanImage.drawable.intrinsicWidth.toDouble()
-                        scaleYFactor = binding.floorplanImage.height / binding.floorplanImage.drawable.intrinsicHeight.toDouble()
-                        scaleFactorCalled = true
-                    }
-                }
+        val vto: ViewTreeObserver = binding.floorplanImage.viewTreeObserver
+        vto.addOnGlobalLayoutListener {
+            floorImageLeftMargin= binding.floorplanImage.left.toFloat()
+            floorImageTopMargin = binding.floorplanImage.top.toFloat()
+            if (binding.floorplanImage.drawable != null) {
+                scaleXFactor = binding.floorplanImage.width / binding.floorplanImage.drawable.intrinsicWidth.toDouble()
+                scaleYFactor = binding.floorplanImage.height / binding.floorplanImage.drawable.intrinsicHeight.toDouble()
+                scaleFactorCalled = true
             }
         }
     }
@@ -350,14 +331,14 @@ class MapFragment : Fragment(), IndoorLocationCallback {
      * converting the y point from meter's to pixel with the present scaling factor of the map
      * rendered in the imageview
      */
-    private fun convertCloudPointToFloorplanYScale(y: Double): Float {
-        return (y * scaleYFactor * currentmap.getPpm()).toFloat()
+    private fun convertCloudPointToFloorPlanYScale(y: Double): Float {
+        return (y * scaleYFactor * currentMap.ppm).toFloat()
     }
     /**
      * Converting the x point from meter's to pixel with the present scaling factor of the map
      * rendered in the imageview
      */
-    private fun convertCloudPointToFloorplanXScale(x: Double): Float {
-        return (x * scaleXFactor * currentmap.getPpm()).toFloat()
+    private fun convertCloudPointToFloorPlanXScale(x: Double): Float {
+        return (x * scaleXFactor * currentMap.ppm).toFloat()
     }
 }

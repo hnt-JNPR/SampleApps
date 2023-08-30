@@ -7,11 +7,10 @@ import com.example.sampleindoorlocationreporting.Constants
 import com.example.sampleindoorlocationreporting.handler.SDKCallbackHandler
 import com.example.sampleindoorlocationreporting.initializer.MistSdkManager
 
-class LocationJobservice : JobService() {
+class LocationJobService : JobService() {
 
-    val constants = Constants()
-    val ORG_SECRET = constants.ORG_SECRET
-    private var needReshedule : Boolean = true
+    private val constants = Constants()
+    private var needReSchedule : Boolean = true
     override fun onStartJob(p0: JobParameters?): Boolean {
         startWorkOnNewThread()
         return true
@@ -23,9 +22,9 @@ class LocationJobservice : JobService() {
 
     private fun doWork() {
         val mistSdkManager : MistSdkManager?= MistSdkManager().getInstance(application)
-        val sdkCallbackHandler : SDKCallbackHandler = SDKCallbackHandler(applicationContext)
+        val sdkCallbackHandler = SDKCallbackHandler()
         if (mistSdkManager != null) {
-            mistSdkManager.init(ORG_SECRET,sdkCallbackHandler,sdkCallbackHandler,applicationContext)
+            mistSdkManager.init(constants.orgSecret,sdkCallbackHandler,sdkCallbackHandler,applicationContext)
             mistSdkManager.startMistSDK()
         }
         Log.d("TAG","SampleLocationApp: doWork() ThreadName: " + Thread.currentThread().name)
@@ -33,11 +32,11 @@ class LocationJobservice : JobService() {
     }
 
     override fun onStopJob(p0: JobParameters?): Boolean {
-        jobFinished(p0,needReshedule)
-        return needReshedule
+        jobFinished(p0,needReSchedule)
+        return needReSchedule
     }
 
-    fun needJobReschedule(needReschedule: Boolean) {
-        LocationJobservice().needReshedule=needReshedule
+    fun needJobReschedule(reschedule: Boolean) {
+        LocationJobService().needReSchedule = reschedule
     }
 }

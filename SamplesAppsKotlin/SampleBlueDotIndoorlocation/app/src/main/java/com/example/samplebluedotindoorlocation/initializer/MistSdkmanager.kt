@@ -7,7 +7,7 @@ import com.mist.android.IndoorLocationManager
 import com.mist.android.VirtualBeaconCallback
 import java.lang.ref.WeakReference
 
-class MistSdkmanager {
+class MistSdkManager {
 
     private var indoorLocationManager : IndoorLocationManager? = null
     private var indoorLocationCallback : IndoorLocationCallback? = null
@@ -15,19 +15,19 @@ class MistSdkmanager {
     private var contextWeakReference :WeakReference<Context>? = null
     private var envType: String?=null
     private var orgSecret : String?=null
-    private var mistSdkManager : MistSdkmanager? = null
+    private var mistSdkManager : MistSdkManager? = null
 
 
-    fun getInstance(context: Context): MistSdkmanager? {
+    fun getInstance(context: Context): MistSdkManager? {
         contextWeakReference = WeakReference<Context>(context)
         if (mistSdkManager == null) {
-            mistSdkManager = MistSdkmanager()
+            mistSdkManager = MistSdkManager()
         }
         return mistSdkManager
     }
 
     fun init(orgSecret: String?, indoorLocationCallback: IndoorLocationCallback?, virtualBeaconCallback: VirtualBeaconCallback?,context: Context) {
-        if (orgSecret != null && !orgSecret.isEmpty()) {
+        if (!orgSecret.isNullOrEmpty()) {
             this.orgSecret = orgSecret
             this.envType = orgSecret[0].toString()
             this.indoorLocationCallback = indoorLocationCallback

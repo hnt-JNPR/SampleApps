@@ -16,8 +16,8 @@ import com.example.sampleindoorlocationreporting.handler.SDKCallbackHandler
 import com.example.sampleindoorlocationreporting.initializer.MistSdkManager
 
 class LocationForegroundService : Service() {
-    val constants = Constants()
-    private val FG_SERVICE_NOTIFICATION_ID = 72
+    private val constants = Constants()
+    private val fgServiceNotificationId = 72
 
     /**
      * If someone calls Context.startService() then the system will retrieve the service (creating
@@ -32,30 +32,29 @@ class LocationForegroundService : Service() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
             createNotificationChannel()
             val intent1 = Intent(this, MainActivity::class.java)
-            val pendingIntent: PendingIntent
-            pendingIntent = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            val pendingIntent: PendingIntent = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
                 PendingIntent.getActivity(this, 0, intent1, PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE)
             } else {
                 PendingIntent.getActivity(this, 0, intent1, PendingIntent.FLAG_UPDATE_CURRENT)
             }
             val notification = NotificationCompat.Builder(this, "ChannelId1")
-                .setContentTitle("Sample Location and Bluedot  App")
+                .setContentTitle("Sample Location and Blue dot  App")
                 .setContentText("Location App  is running !!").setContentIntent(pendingIntent)
                 .build()
-            startForeground(FG_SERVICE_NOTIFICATION_ID, notification, ServiceInfo.FOREGROUND_SERVICE_TYPE_DATA_SYNC)
-            startSdk(constants.ORG_SECRET)
+            startForeground(fgServiceNotificationId, notification, ServiceInfo.FOREGROUND_SERVICE_TYPE_DATA_SYNC)
+            startSdk(constants.orgSecret)
         }
         /**
          * If the service is killed then system will try to recreate the service by calling onStartCommand with null intent
          */
-        return Service.START_STICKY
+        return START_STICKY
     }
 
     private fun startSdk(orgSecret: String?) {
         if (orgSecret != null) {
             val mistSdkManager: MistSdkManager?= MistSdkManager().getInstance(applicationContext)
             //mistSdkManager?.getInstance(applicationContext)
-            val sdkCallbackHandler = SDKCallbackHandler(applicationContext)
+            val sdkCallbackHandler = SDKCallbackHandler()
             mistSdkManager?.init(orgSecret, sdkCallbackHandler, sdkCallbackHandler,applicationContext)
             mistSdkManager?.startMistSDK()
         }
@@ -84,9 +83,6 @@ class LocationForegroundService : Service() {
 
     private fun destroy() {
         val mistSdkManager: MistSdkManager? = MistSdkManager().getInstance(application as Application)
-        //mistSdkManager?.getInstance(application as Application)
-        if (mistSdkManager != null) {
-            mistSdkManager.destroy()
-        }
+        mistSdkManager?.destroy()
     }
 }

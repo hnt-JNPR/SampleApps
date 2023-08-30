@@ -21,7 +21,7 @@ class SDKCallbackHandler(var context: Context) : VirtualBeaconCallback, IndoorLo
      * Returns updated location of the mobile client (as a point (X, Y) measured in meters from the map origin, i.e., relative X, Y)
      */
 
-    val notificationHandler=NotificationHandler()
+    private val notificationHandler=NotificationHandler()
     override fun onRelativeLocationUpdated(relativeLocation: MistPoint) {
         Log.v(TAG, "onRelativeLocationUpdated called")
         notificationHandler.sendNotification(context, relativeLocation.toString())

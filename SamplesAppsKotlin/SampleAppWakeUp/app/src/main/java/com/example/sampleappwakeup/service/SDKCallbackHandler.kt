@@ -1,6 +1,5 @@
 package com.example.sampleappwakeup.service
 
-import android.app.AlarmManager
 import android.app.KeyguardManager
 import android.content.Context
 import android.content.Intent
@@ -22,16 +21,16 @@ import com.mist.android.VirtualBeaconCallback
  * from Mist SDK
  */
 class SDKCallbackHandler : VirtualBeaconCallback, IndoorLocationCallback {
-    lateinit var context : Context
+    private lateinit var context : Context
     private var lastFailedTime : Long = 0
     private var failedCount : Long = 0
-    val notificationHandler = NotificationHandler()
-    val AltBeaconUtil = AltBeaconUtil()
-    val Constants = Constants()
-    val MainApplication = MainApplication()
+    private val notificationHandler = NotificationHandler()
+    private val altBeaconUtil = AltBeaconUtil()
+    private val constants = Constants()
+    private val mainApplication = MainApplication()
     //val MistSdkManager = MistSdkManager()
 
-    private val TAG : String = "SamplewakeUpApp"
+    private val TAG : String = "SampleWakeUpApp"
 
     /**
      * We need to implement this method as per our business logic.
@@ -51,7 +50,7 @@ class SDKCallbackHandler : VirtualBeaconCallback, IndoorLocationCallback {
     }
 
     override fun onError(errorType: ErrorType, errorMessage: String) {
-        Log.v(TAG,"onError called " + errorMessage)
+        Log.v(TAG, "onError called $errorMessage")
         if(errorType!=ErrorType.NO_BEACONS_DETECTED){
             /**
              * Stopping location service only for vble related errors
@@ -60,7 +59,7 @@ class SDKCallbackHandler : VirtualBeaconCallback, IndoorLocationCallback {
             return
         }
         if(failedCount % 10 < 1){
-            notificationHandler.sendNotification(context,errorMessage + " " + failedCount)
+            notificationHandler.sendNotification(context, "$errorMessage $failedCount")
         }
         if(lastFailedTime == 0L){
             lastFailedTime = System.currentTimeMillis()
@@ -73,18 +72,18 @@ class SDKCallbackHandler : VirtualBeaconCallback, IndoorLocationCallback {
         /**
          * We are stopping the location sdk, if we get more then NO_VBLE_FAIL_COUNT_LIMIT vble error after 5 min.
          */
-        if(timeSinceInitialFailedCall >= Constants.NO_VBLE_TIMEOUT_MS && failedCount > Constants.NO_VBLE_FAIL_COUNT_LIMIT){
+        if(timeSinceInitialFailedCall >= constants.noVBLETimeMs && failedCount > constants.noVBLEFailCountLimit){
             /** Stopping the location SDK */
-            val mainApplication= MainApplication.getApplication()
+            val mainApplication= mainApplication.getApplication()
             if(mainApplication != null) {
                 MistSdkManager().getInstance(mainApplication)?.stopMistSDK()
             }
             /** Here we reduce the scan time for alt beacon so that it starts scanning for beacon frequently. */
-            AltBeaconUtil.decreaseBeaconScanPeriod(mainApplication?.getBeconmanager()!!)
+            altBeaconUtil.decreaseBeaconScanPeriod(mainApplication.getBeaconManager())
             /** Stopping the location foreground service*/
             val intent = Intent(context,LocationForegroundService::class.java)
             context.stopService(intent)
-        } else if(timeSinceInitialFailedCall >= Constants.NO_VBLE_TIMEOUT_MS && failedCount < Constants.NO_VBLE_FAIL_COUNT_LIMIT){
+        } else if(timeSinceInitialFailedCall >= constants.noVBLETimeMs && failedCount < constants.noVBLEFailCountLimit){
             failedCount = 1
             lastFailedTime = System.currentTimeMillis()
         }

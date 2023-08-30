@@ -8,8 +8,8 @@ import android.content.Intent
 import android.os.Build
 import androidx.core.app.NotificationCompat
 
-public class NotificationHandler {
-    fun createNotificationChannel(context: Context) {
+class NotificationHandler {
+    private fun createNotificationChannel(context: Context) {
         /*Check if OS is Oreo and above*/
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             val notificationChannel = NotificationChannel("ChannelId1", "Sample Location notification", NotificationManager.IMPORTANCE_DEFAULT)

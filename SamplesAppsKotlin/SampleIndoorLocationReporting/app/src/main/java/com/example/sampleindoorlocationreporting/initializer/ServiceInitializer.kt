@@ -6,31 +6,29 @@ import android.content.ComponentName
 import android.content.Context
 import android.content.Intent
 import android.os.Build
-import androidx.core.content.ContextCompat
 import androidx.core.content.ContextCompat.startForegroundService
 import com.example.sampleindoorlocationreporting.Constants
 import com.example.sampleindoorlocationreporting.service.LocationForegroundService
-import com.example.sampleindoorlocationreporting.service.LocationJobservice
+import com.example.sampleindoorlocationreporting.service.LocationJobService
 
 /**
  * ServiceInitializer This class provides utility functions to start the android services.
  */
-class Serviceinitializer {
+class ServiceInitializer {
     /* Define your SDK job ID here.*/
-    public final val MIST_SDK_JOB_ID : Int =789
+    private val mistSdkJobId : Int =789
 
-    val Constants = Constants()
-    val LocationJobService=LocationJobservice()
+    private val locationJobService=LocationJobService()
 
     enum class BackgroundServiceType {
         SCHEDULE_SERVICE, FOREGROUND_SERVICE
     }
 
-    var BACKGROUND = BackgroundServiceType.SCHEDULE_SERVICE
+    private var background = BackgroundServiceType.SCHEDULE_SERVICE
 
     fun startLocationService(context : Context){
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
-            BACKGROUND = BackgroundServiceType.FOREGROUND_SERVICE
+            background = BackgroundServiceType.FOREGROUND_SERVICE
             startMistForegroundService(context)
         }
         else{
@@ -39,21 +37,21 @@ class Serviceinitializer {
     }
 
     fun stopLocationService(context: Context) {
-        if (BACKGROUND == BackgroundServiceType.SCHEDULE_SERVICE) {
+        if (background == BackgroundServiceType.SCHEDULE_SERVICE) {
             stopScheduleJob(context)
         }
-        else if(BACKGROUND==BackgroundServiceType.FOREGROUND_SERVICE){
+        else if(background==BackgroundServiceType.FOREGROUND_SERVICE){
             stopMistForegroundService(context)
         }
     }
 
     /** stop scheduled job */
     @Throws(java.lang.NullPointerException::class)
-    open fun stopScheduleJob(context: Context) {
+    fun stopScheduleJob(context: Context) {
         val jobScheduler = context.getSystemService(Context.JOB_SCHEDULER_SERVICE) as JobScheduler
         if (jobScheduler != null) {
-            LocationJobService.needJobReschedule(false)
-            jobScheduler.cancel(MIST_SDK_JOB_ID)
+            locationJobService.needJobReschedule(false)
+            jobScheduler.cancel(mistSdkJobId)
         } else {
             throw java.lang.NullPointerException("JobScheduler Service is null")
         }
@@ -66,12 +64,12 @@ class Serviceinitializer {
      * https://developer.android.com/reference/android/app/job/JobScheduler
      */
     @Throws(NullPointerException::class)
-    open fun scheduleJob(context: Context) {
-        val serviceComponent = ComponentName(context, LocationJobService::class.java)
-        val builder = JobInfo.Builder(MIST_SDK_JOB_ID, serviceComponent).setRequiredNetworkType(JobInfo.NETWORK_TYPE_ANY).setPersisted(true)
+    fun scheduleJob(context: Context) {
+        val serviceComponent = ComponentName(context, locationJobService::class.java)
+        val builder = JobInfo.Builder(mistSdkJobId, serviceComponent).setRequiredNetworkType(JobInfo.NETWORK_TYPE_ANY).setPersisted(true)
         val jobScheduler = context.getSystemService(Context.JOB_SCHEDULER_SERVICE) as JobScheduler
         if (jobScheduler != null) {
-            LocationJobService.needJobReschedule(true)
+            locationJobService.needJobReschedule(true)
             jobScheduler.schedule(builder.build())
         } else {
             throw NullPointerException("JobScheduler Service is null")
@@ -79,7 +77,7 @@ class Serviceinitializer {
     }
 
     private fun startMistForegroundService(context: Context) {
-        val intent = Intent(context, LocationForegroundService::class.java).putExtra("ORG_SECRET",Constants.ORG_SECRET)
+        val intent = Intent(context, LocationForegroundService::class.java).putExtra("ORG_SECRET",Constants().orgSecret)
         startForegroundService(context,intent)
     }
 

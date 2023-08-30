@@ -7,10 +7,10 @@ import androidx.core.content.ContextCompat
 import com.example.samplebluedotindoorlocation.service.LocationForegroundService
 
 
-class Serviceintializer {
+class ServiceInitializer {
 
     /* Define your SDK job ID here.*/
-    public final val MIST_SDK_JOB_ID : Int =789
+    //public final val MIST_SDK_JOB_ID : Int =789
 
     fun startLocationService(context : Context){
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {

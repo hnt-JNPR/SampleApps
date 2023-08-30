@@ -22,17 +22,16 @@ class MainApplication : Application(), MonitorNotifier {
 
     private val TAG : String = "SampleAppWakeUp"
     private lateinit var mainApplication : MainApplication
-    //private var beaconManager : BeaconManager? = null
     private lateinit var beaconManager: BeaconManager
 
-    val NotificationHandler = NotificationHandler()
-    val AltBeaconUtil = AltBeaconUtil()
+    private val notificationHandler = NotificationHandler()
+    private val altBeaconUtil = AltBeaconUtil()
 
     override fun onCreate() {
         super.onCreate()
         mainApplication = this
         beaconManager = BeaconManager.getInstanceForApplication(applicationContext)
-        NotificationHandler.createNotificationChannel(applicationContext)
+        notificationHandler.createNotificationChannel(applicationContext)
     }
 
     fun getApplication() : MainApplication {
@@ -45,13 +44,13 @@ class MainApplication : Application(), MonitorNotifier {
             return
         }
         Log.i(TAG,"Found beacon " + region.uniqueId)
-        NotificationHandler.sendNotification(applicationContext, "Found Beacon " + region.uniqueId)
+        notificationHandler.sendNotification(applicationContext, "Found Beacon " + region.uniqueId)
         if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q){
             // Increase beacon scan interval for reducing scan frequency.
-            AltBeaconUtil.increaseBeaconScanPeriod(mainApplication.getBeconmanager())
+            altBeaconUtil.increaseBeaconScanPeriod(mainApplication.getBeaconManager())
             //Starting mist location SDK as foreground service
             val intent = Intent(applicationContext, LocationForegroundService::class.java)
-            NotificationHandler.sendNotification(applicationContext,"start foreground mist beacon service")
+            notificationHandler.sendNotification(applicationContext,"start foreground mist beacon service")
             startForegroundService(intent)
         }
     }
@@ -61,16 +60,15 @@ class MainApplication : Application(), MonitorNotifier {
             return
         }
         Log.i(TAG,"Lost beacon")
-        NotificationHandler.sendNotification(applicationContext,"Lost beacon " + region.uniqueId)
+        notificationHandler.sendNotification(applicationContext,"Lost beacon " + region.uniqueId)
     }
 
     override fun didDetermineStateForRegion(state: Int, region: Region?) {
-        Log.i(TAG,"Switched from seeing/not seeing beacons:"+state)
-        NotificationHandler.sendNotification(applicationContext,"Switched from seeing/not seeing beacons: "+ state)
+        Log.i(TAG, "Switched from seeing/not seeing beacons:$state")
+        notificationHandler.sendNotification(applicationContext, "Switched from seeing/not seeing beacons: $state")
     }
 
-    fun getBeconmanager() : BeaconManager {
-        //beaconManager = BeaconManager.getInstanceForApplication(applicationContext)
+    fun getBeaconManager() : BeaconManager {
         return beaconManager
     }
 

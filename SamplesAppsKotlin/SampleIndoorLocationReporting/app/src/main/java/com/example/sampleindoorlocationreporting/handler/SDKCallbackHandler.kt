@@ -11,11 +11,11 @@ import com.mist.android.MistPoint
 import com.mist.android.MistVirtualBeacon
 import com.mist.android.VirtualBeaconCallback
 
-class SDKCallbackHandler(context: Context) : VirtualBeaconCallback, IndoorLocationCallback{
+class SDKCallbackHandler : VirtualBeaconCallback, IndoorLocationCallback{
 
-    lateinit var context : Context
+    private lateinit var context : Context
     private val TAG : String = "SampleLocationApp"
-    val notificationHandler = NotificationHandler()
+    private val notificationHandler = NotificationHandler()
 
     /**
      * We need to implement this method as per our business logic.
@@ -34,7 +34,7 @@ class SDKCallbackHandler(context: Context) : VirtualBeaconCallback, IndoorLocati
     }
 
     override fun onError(errorType: ErrorType, errorMessage: String) {
-        Log.v(TAG,"onError called " + errorMessage)
+        Log.v(TAG, "onError called $errorMessage")
         notificationHandler.sendNotification(context,errorMessage)
         /** Notifies the host application about any errors encountered */
     }

@@ -5,19 +5,19 @@ class Constants {
      * Provide SDK token in ORG_SECRET,
      * we can get org secret from MIST UI (Organization —> Mobile SDK)
      */
-    val ORG_SECRET : String = ""
+    val orgSecret : String = ""
     /**
      * Provide orgId for alt beacon scanning here
      */
-    val ORG_ID : String = "6748cfa6-4e12-11e6-9188-0242ac110007"
+    val orgId : String = "6748cfa6-4e12-11e6-9188-0242ac110007"
 
-    val NO_VBLE_TIMEOUT_MS : Long = 5 * 60 * 1000
+    val noVBLETimeMs : Long = 5 * 60 * 1000
 
-    val NO_VBLE_FAIL_COUNT_LIMIT : Long = 200
+    val noVBLEFailCountLimit : Long = 200
 
-    val BEACON_SCAN_INTERVAL_LOCATION_SDK_RUNNING_MS : Long = 10 * 60 * 1000   /* In ms*/
+    val beaconScanIntervalLocationSdkRunningMs : Long = 10 * 60 * 1000   /* In ms*/
 
-    val BEACON_SCAN_INTERVAL_LOCATION_SDK_NOT_RUNNING_MS : Long = 100   /* In ms*/
+    val beaconScanIntervalLocationSdkNotRunningMs : Long = 100   /* In ms*/
 
-    val BEACON_PER_SCAN_DURATION : Long = 1000
+    val beaconPerScanDuration : Long = 1000
 }

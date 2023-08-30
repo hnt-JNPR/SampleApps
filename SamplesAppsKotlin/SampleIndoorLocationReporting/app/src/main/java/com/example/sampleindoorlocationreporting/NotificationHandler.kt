@@ -11,12 +11,12 @@ import androidx.core.app.NotificationCompat
 
 class NotificationHandler {
 
-    fun createNotificationChannel(context: Context){
+    private fun createNotificationChannel(context: Context){
         /**
          * Check if OS is Oreo and above
          */
         if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.O){
-            val notificationChannel : NotificationChannel = NotificationChannel("ChannelId1","Sample Location notification",NotificationManager.IMPORTANCE_DEFAULT )
+            val notificationChannel = NotificationChannel("ChannelId1","Sample Location notification",NotificationManager.IMPORTANCE_DEFAULT )
             val manager = context.getSystemService(NotificationManager::class.java)
             manager.createNotificationChannel(notificationChannel)
         }
@@ -26,12 +26,10 @@ class NotificationHandler {
         if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q){
             createNotificationChannel(context)
             val intent1 = Intent(context,MainActivity::class.java)
-            val pendingIntent : PendingIntent
-            if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q){
-                pendingIntent = PendingIntent.getActivity(context, 0, intent1, PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE)
-            }
-            else{
-                pendingIntent = PendingIntent.getActivity(context,0,intent1,PendingIntent.FLAG_UPDATE_CURRENT)
+            val pendingIntent : PendingIntent = if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q){
+                PendingIntent.getActivity(context, 0, intent1, PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE)
+            } else{
+                PendingIntent.getActivity(context,0,intent1,PendingIntent.FLAG_UPDATE_CURRENT)
             }
             val notification : Notification = NotificationCompat.Builder(context,"ChannelId1").setContentTitle("Sample Mist Location App").setContentText(text).setSmallIcon(R.drawable.ic_launcher_foreground).setContentIntent(pendingIntent).build()
             val notificationManager = context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
