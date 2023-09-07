@@ -11,7 +11,7 @@ import androidx.core.app.NotificationCompat
 
 class NotificationHandler {
 
-    private fun createNotificationChannel(context: Context){
+    fun createNotificationChannel(context: Context){
         /**
          * Check if OS is Oreo and above
          */

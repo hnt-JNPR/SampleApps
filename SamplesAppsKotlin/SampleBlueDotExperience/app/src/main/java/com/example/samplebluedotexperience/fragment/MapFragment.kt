@@ -30,7 +30,7 @@ class MapFragment : Fragment(), IndoorLocationCallback {
     private var _binding : MapFragmentBinding?=null
     private val binding get() = _binding!!
 
-    private lateinit var mistSdkManager : MistSdkManager
+    private var mistSdkManager = MistSdkManager()
 
     val TAG = MapFragment::class.java.simpleName
 
@@ -52,7 +52,7 @@ class MapFragment : Fragment(), IndoorLocationCallback {
 
     private var scaleYFactor : Double = 0.0
 
-    private var scaleFactorCalled : Boolean = true
+    private var scaleFactorCalled : Boolean = false
 
     private var floorImageLeftMargin : Float = 0.0F
 
@@ -94,8 +94,9 @@ class MapFragment : Fragment(), IndoorLocationCallback {
         if (arguments != null) {
             orgSecret = requireArguments().getString(sdkToken)!!
         }
-        mistSdkManager = MistSdkManager().getInstance(mainApplication.applicationContext)!!
+        mistSdkManager.getInstance(mainApplication.applicationContext)
     }
+
 
     @RequiresApi(Build.VERSION_CODES.S)
     override fun onStart() {
@@ -265,7 +266,7 @@ class MapFragment : Fragment(), IndoorLocationCallback {
                 binding.floorplanbluedot.visibility = View.VISIBLE
                 binding.progressBar.visibility = View.GONE
                 if (!scaleFactorCalled) {
-                    setupScaleFactorForFloorplan()
+                    setupScaleFactorForFloorPlan()
                 }
             }
 
@@ -277,7 +278,7 @@ class MapFragment : Fragment(), IndoorLocationCallback {
                             binding.progressBar.visibility = View.GONE
                             addedMap = true
                             if (!scaleFactorCalled) {
-                                setupScaleFactorForFloorplan()
+                                setupScaleFactorForFloorPlan()
                             }
                             Log.d(TAG,"Image downloaded from server successfully !!")
                         }
@@ -303,7 +304,7 @@ class MapFragment : Fragment(), IndoorLocationCallback {
                     val yPos: Float = convertCloudPointToFloorPlanYScale(point.y)
                     // If scaleX and scaleY are not defined, check again
                     if (!scaleFactorCalled && (scaleXFactor == 0.0 || scaleYFactor == 0.0)) {
-                        setupScaleFactorForFloorplan()
+                        setupScaleFactorForFloorPlan()
                     }
                     val leftMargin: Float = floorImageLeftMargin + (xPos - binding.floorplanbluedot.width) / 2
                     val topMargin: Float = floorImageTopMargin + (yPos - binding.floorplanbluedot.height) / 2
@@ -314,7 +315,7 @@ class MapFragment : Fragment(), IndoorLocationCallback {
         }
     }
 
-    private fun setupScaleFactorForFloorplan(){
+    private fun setupScaleFactorForFloorPlan(){
         val vto: ViewTreeObserver = binding.floorplanImage.viewTreeObserver
         vto.addOnGlobalLayoutListener {
             floorImageLeftMargin= binding.floorplanImage.left.toFloat()

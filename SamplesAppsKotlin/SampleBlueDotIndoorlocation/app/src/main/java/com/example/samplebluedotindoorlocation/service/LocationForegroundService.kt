@@ -51,11 +51,11 @@ class LocationForegroundService : Service() {
 
     private fun startSdk(orgSecret: String?) {
         if (orgSecret != null) {
-            val mistSdkManager: MistSdkManager?=null
-            mistSdkManager?.getInstance(applicationContext)
+            val mistSdkManager = MistSdkManager()
+            mistSdkManager.getInstance(applicationContext)
             val sdkCallbackHandler = SDKCallbackHandler(applicationContext)
-            mistSdkManager?.init(orgSecret, sdkCallbackHandler, sdkCallbackHandler,applicationContext)
-            mistSdkManager?.startMistSDK()
+            mistSdkManager.init(orgSecret, sdkCallbackHandler, sdkCallbackHandler,applicationContext)
+            mistSdkManager.startMistSDK()
         }
     }
 
@@ -63,14 +63,8 @@ class LocationForegroundService : Service() {
     private fun createNotificationChannel() {
         /** Check if OS is Oreo and above */
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            val notificationChannel = NotificationChannel(
-                "ChannelId1",
-                "Foreground notification",
-                NotificationManager.IMPORTANCE_DEFAULT
-            )
-            val manager = getSystemService(
-                NotificationManager::class.java
-            )
+            val notificationChannel = NotificationChannel("ChannelId1", "Foreground notification", NotificationManager.IMPORTANCE_DEFAULT)
+            val manager = getSystemService(NotificationManager::class.java)
             manager.createNotificationChannel(notificationChannel)
         }
     }
@@ -87,8 +81,8 @@ class LocationForegroundService : Service() {
     }
 
     private fun destroy() {
-        val mistSdkManager: MistSdkManager? = MistSdkManager().getInstance(application as Application)
-        //mistSdkManager?.getInstance(application as Application)
-        mistSdkManager?.destroy()
+        val mistSdkManager = MistSdkManager()
+        mistSdkManager.getInstance(application as Application)
+        mistSdkManager.destroy()
     }
 }

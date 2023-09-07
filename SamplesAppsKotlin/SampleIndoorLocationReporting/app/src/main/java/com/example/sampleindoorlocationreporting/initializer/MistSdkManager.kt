@@ -19,16 +19,17 @@ class MistSdkManager {
     private var indoorLocationManager : IndoorLocationManager? = null
     private var indoorLocationCallback : IndoorLocationCallback? = null
     private var virtualBeaconCallback : VirtualBeaconCallback? =null
-    private var contextWeakReference : WeakReference<Context>? = null
+    private lateinit var contextWeakReference : WeakReference<Context>
     private var envType: String?=null
     private var orgSecret : String?=null
-    private var mistSdkManager : MistSdkManager? = null
+    private  lateinit var mistSdkManager : MistSdkManager
 
-    fun getInstance(context: Context): MistSdkManager? {
+
+    fun getInstance(context: Context): MistSdkManager {
         contextWeakReference = WeakReference<Context>(context)
-        if (mistSdkManager == null) {
+        //if (mistSdkManager == null) {
             mistSdkManager = MistSdkManager()
-        }
+        //}
         return mistSdkManager
     }
 
@@ -40,14 +41,14 @@ class MistSdkManager {
             this.virtualBeaconCallback = virtualBeaconCallback
         } else {
             this.contextWeakReference=WeakReference<Context>(context)
-            Toast.makeText(contextWeakReference?.get(), "Org Secret not present", Toast.LENGTH_SHORT).show()
+            Toast.makeText(contextWeakReference.get(), "Org Secret not present", Toast.LENGTH_SHORT).show()
         }
     }
 
     @Synchronized
     fun startMistSDK() {
         if (indoorLocationManager == null) {
-            indoorLocationManager=IndoorLocationManager.getInstance(contextWeakReference?.get(), orgSecret)
+            indoorLocationManager=IndoorLocationManager.getInstance(contextWeakReference.get(), orgSecret)
             val node=indoorLocationManager
             node?.setVirtualBeaconCallback(virtualBeaconCallback)
             node?.start(indoorLocationCallback)

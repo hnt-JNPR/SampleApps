@@ -3,7 +3,7 @@ package com.example.samplebluedotindoorlocation.initializer
 import android.content.Context
 import android.content.Intent
 import android.os.Build
-import androidx.core.content.ContextCompat
+import androidx.core.content.ContextCompat.startForegroundService
 import com.example.samplebluedotindoorlocation.service.LocationForegroundService
 
 
@@ -18,20 +18,21 @@ class ServiceInitializer {
         }
     }
 
-    fun stopLocationService(context: Context?) {
+    fun stopLocationService(context: Context) {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
             stopMistForegroundService(context)
         }
     }
 
-    private fun stopMistForegroundService(context: Context?) {
+    private fun stopMistForegroundService(context: Context) {
         val intent = Intent(context, LocationForegroundService::class.java)
-        ContextCompat.startForegroundService(context!!, intent)
+        context.stopService(intent)
     }
 
     private fun startMistForegroundService(context: Context) {
         val intent = Intent(context,LocationForegroundService::class.java)
-        context.stopService(intent)
+        startForegroundService(context, intent)
+
     }
 
 

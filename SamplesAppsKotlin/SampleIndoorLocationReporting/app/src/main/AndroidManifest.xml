@@ -50,7 +50,7 @@
             android:name=".service.LocationForegroundService"
             android:stopWithTask="false"
             android:foregroundServiceType="dataSync"
-            android:permission="android.Manifest.permission.FOREGROUND_SERVICE"
+            android:permission="android.permission.FOREGROUND_SERVICE"
             android:enabled="true"
             android:exported="false"
             android:persistent="true"

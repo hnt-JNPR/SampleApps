@@ -7,7 +7,7 @@ import com.mist.android.IndoorLocationManager
 import com.mist.android.VirtualBeaconCallback
 import java.lang.ref.WeakReference
 
-class MistSdkManager {
+class MistSdkManager{
 
     /**
      * Required by Mist SDK for initialization
@@ -17,18 +17,18 @@ class MistSdkManager {
      */
 
     private var indoorLocationManager: IndoorLocationManager?=null
-    private var indoorLocationCallback : IndoorLocationCallback?=null
+    private lateinit var indoorLocationCallback:IndoorLocationCallback
     private var virtualBeaconCallback: VirtualBeaconCallback?=null
-    private var contextWeakReference: WeakReference<Context>?=null
+    private lateinit var contextWeakReference: WeakReference<Context>
     private var sdkInitializer : MistSdkManager? = null
     private var orgSecret : String? = null
 
-    fun getInstance(context: Context): MistSdkManager? {
-        contextWeakReference = WeakReference(context)
+    fun getInstance(context: Context): MistSdkManager {
+        contextWeakReference = WeakReference<Context>(context)
         if (sdkInitializer == null) {
             sdkInitializer = MistSdkManager()
         }
-        return sdkInitializer
+        return sdkInitializer as MistSdkManager
     }
 
     fun init(orgSecret:String, indoorLocationCallback: IndoorLocationCallback, virtualBeaconCallback: VirtualBeaconCallback?){
@@ -48,9 +48,12 @@ class MistSdkManager {
     fun startMistSdk(){
         if(indoorLocationManager==null){
             Log.d("", "IndoorLocationManager Start$orgSecret")
-            indoorLocationManager = IndoorLocationManager.getInstance(contextWeakReference?.get(),orgSecret)
+            indoorLocationManager = IndoorLocationManager.getInstance(contextWeakReference.get(),orgSecret)
             indoorLocationManager?.setVirtualBeaconCallback(virtualBeaconCallback)
             indoorLocationManager?.start(indoorLocationCallback)
+        }
+        else{
+            restartMistSdk()
         }
     }
 
@@ -63,15 +66,15 @@ class MistSdkManager {
     fun destroyMistSdk(){
         if(indoorLocationManager!=null){
             indoorLocationManager?.stop()
-            indoorLocationManager=null
+            //indoorLocationManager=null
         }
     }
 
     private fun restartMistSdk() {
         if(indoorLocationManager!=null){
             stopMistSdk()
-            indoorLocationManager?.setVirtualBeaconCallback((virtualBeaconCallback))
             indoorLocationManager?.start(indoorLocationCallback)
         }
     }
+
 }

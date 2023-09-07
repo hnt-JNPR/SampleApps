@@ -23,8 +23,7 @@ class MapFragment : Fragment(),IndoorLocationCallback {
     private var _binding : MapFragmentBinding? = null
     private val binding get() = _binding!!
 
-    private lateinit var mistSdkManager : MistSdkManager
-
+    private var mistSdkManager = MistSdkManager()
     val TAG = MapFragment::class.java.simpleName
 
     private val sdkToken : String = "sdk-token"
@@ -41,7 +40,7 @@ class MapFragment : Fragment(),IndoorLocationCallback {
 
     private var scaleYFactor : Double = 0.0
 
-    private var scaleFactorCalled : Boolean = true
+    private var scaleFactorCalled : Boolean = false
 
     private var floorImageLeftMargin : Float = 0.0F
 
@@ -73,7 +72,7 @@ class MapFragment : Fragment(),IndoorLocationCallback {
         if (arguments != null) {
             orgSecret = requireArguments().getString(sdkToken)!!
         }
-        mistSdkManager = MistSdkManager().getInstance(mainApplication.applicationContext)!!
+        mistSdkManager.getInstance(mainApplication.applicationContext)
     }
 
     override fun onStart() {

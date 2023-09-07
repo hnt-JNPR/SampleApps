@@ -35,7 +35,7 @@ class MainActivity : AppCompatActivity() {
         /** Stopping the location sdk background service,if its running. */
         serviceInitializer.stopLocationService(applicationContext)
         if(checkPermissions()){
-            /** If permissions are provide load the Bluedot map fragment. */
+            /** If permissions are provide load the Blue dot map fragment. */
             setUpMapFragment(constants.orgSecret)
         }
     }

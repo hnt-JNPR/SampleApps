@@ -20,8 +20,8 @@ import com.mist.android.VirtualBeaconCallback
  * We provide business logic from application perspective for different callback
  * from Mist SDK
  */
-class SDKCallbackHandler : VirtualBeaconCallback, IndoorLocationCallback {
-    private lateinit var context : Context
+class SDKCallbackHandler(private var context: Context) : VirtualBeaconCallback, IndoorLocationCallback {
+    //private lateinit var context : Context
     private var lastFailedTime : Long = 0
     private var failedCount : Long = 0
     private val notificationHandler = NotificationHandler()
@@ -75,9 +75,7 @@ class SDKCallbackHandler : VirtualBeaconCallback, IndoorLocationCallback {
         if(timeSinceInitialFailedCall >= constants.noVBLETimeMs && failedCount > constants.noVBLEFailCountLimit){
             /** Stopping the location SDK */
             val mainApplication= mainApplication.getApplication()
-            if(mainApplication != null) {
-                MistSdkManager().getInstance(mainApplication)?.stopMistSDK()
-            }
+            MistSdkManager().getInstance(mainApplication)?.stopMistSDK()
             /** Here we reduce the scan time for alt beacon so that it starts scanning for beacon frequently. */
             altBeaconUtil.decreaseBeaconScanPeriod(mainApplication.getBeaconManager())
             /** Stopping the location foreground service*/

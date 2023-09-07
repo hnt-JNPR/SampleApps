@@ -11,9 +11,8 @@ import com.mist.android.MistPoint
 import com.mist.android.MistVirtualBeacon
 import com.mist.android.VirtualBeaconCallback
 
-class SDKCallbackHandler : VirtualBeaconCallback, IndoorLocationCallback{
+class SDKCallbackHandler(private val context: Context) : VirtualBeaconCallback, IndoorLocationCallback{
 
-    private lateinit var context : Context
     private val TAG : String = "SampleLocationApp"
     private val notificationHandler = NotificationHandler()
 

@@ -1,6 +1,5 @@
 package com.example.sampleindoorlocationreporting.service
 
-import android.app.Application
 import android.app.NotificationChannel
 import android.app.NotificationManager
 import android.app.PendingIntent
@@ -52,11 +51,12 @@ class LocationForegroundService : Service() {
 
     private fun startSdk(orgSecret: String?) {
         if (orgSecret != null) {
-            val mistSdkManager: MistSdkManager?= MistSdkManager().getInstance(applicationContext)
+            val mistSdkManager= MistSdkManager()
+            mistSdkManager.getInstance(applicationContext)
             //mistSdkManager?.getInstance(applicationContext)
-            val sdkCallbackHandler = SDKCallbackHandler()
-            mistSdkManager?.init(orgSecret, sdkCallbackHandler, sdkCallbackHandler,applicationContext)
-            mistSdkManager?.startMistSDK()
+            val sdkCallbackHandler = SDKCallbackHandler(applicationContext)
+            mistSdkManager.init(orgSecret, sdkCallbackHandler, sdkCallbackHandler,applicationContext)
+            mistSdkManager.startMistSDK()
         }
     }
 
@@ -82,7 +82,8 @@ class LocationForegroundService : Service() {
     }
 
     private fun destroy() {
-        val mistSdkManager: MistSdkManager? = MistSdkManager().getInstance(application as Application)
-        mistSdkManager?.destroy()
+        val mistSdkManager = MistSdkManager()
+        mistSdkManager.getInstance(applicationContext)
+        mistSdkManager.destroy()
     }
 }

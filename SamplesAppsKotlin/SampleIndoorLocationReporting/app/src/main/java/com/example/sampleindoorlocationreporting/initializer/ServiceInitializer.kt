@@ -46,15 +46,10 @@ class ServiceInitializer {
     }
 
     /** stop scheduled job */
-    @Throws(java.lang.NullPointerException::class)
-    fun stopScheduleJob(context: Context) {
+    private fun stopScheduleJob(context: Context) {
         val jobScheduler = context.getSystemService(Context.JOB_SCHEDULER_SERVICE) as JobScheduler
-        if (jobScheduler != null) {
-            locationJobService.needJobReschedule(false)
-            jobScheduler.cancel(mistSdkJobId)
-        } else {
-            throw java.lang.NullPointerException("JobScheduler Service is null")
-        }
+        locationJobService.needJobReschedule(false)
+        jobScheduler.cancel(mistSdkJobId)
     }
 
     /**
@@ -63,17 +58,12 @@ class ServiceInitializer {
      * https://developer.android.com/reference/android/app/job/JobService
      * https://developer.android.com/reference/android/app/job/JobScheduler
      */
-    @Throws(NullPointerException::class)
-    fun scheduleJob(context: Context) {
+    private fun scheduleJob(context: Context) {
         val serviceComponent = ComponentName(context, locationJobService::class.java)
         val builder = JobInfo.Builder(mistSdkJobId, serviceComponent).setRequiredNetworkType(JobInfo.NETWORK_TYPE_ANY).setPersisted(true)
         val jobScheduler = context.getSystemService(Context.JOB_SCHEDULER_SERVICE) as JobScheduler
-        if (jobScheduler != null) {
-            locationJobService.needJobReschedule(true)
-            jobScheduler.schedule(builder.build())
-        } else {
-            throw NullPointerException("JobScheduler Service is null")
-        }
+        locationJobService.needJobReschedule(true)
+        jobScheduler.schedule(builder.build())
     }
 
     private fun startMistForegroundService(context: Context) {

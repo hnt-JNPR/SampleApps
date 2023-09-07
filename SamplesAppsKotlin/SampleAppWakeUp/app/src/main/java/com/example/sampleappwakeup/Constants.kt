@@ -9,7 +9,7 @@ class Constants {
     /**
      * Provide orgId for alt beacon scanning here
      */
-    val orgId : String = "6748cfa6-4e12-11e6-9188-0242ac110007"
+    val orgId : String = "f0f979b4-d1ce-443e-8c41-5f5b9b716439"
 
     val noVBLETimeMs : Long = 5 * 60 * 1000
 

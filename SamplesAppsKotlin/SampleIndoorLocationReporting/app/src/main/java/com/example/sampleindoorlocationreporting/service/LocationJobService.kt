@@ -21,12 +21,11 @@ class LocationJobService : JobService() {
     }
 
     private fun doWork() {
-        val mistSdkManager : MistSdkManager?= MistSdkManager().getInstance(application)
-        val sdkCallbackHandler = SDKCallbackHandler()
-        if (mistSdkManager != null) {
-            mistSdkManager.init(constants.orgSecret,sdkCallbackHandler,sdkCallbackHandler,applicationContext)
-            mistSdkManager.startMistSDK()
-        }
+        val mistSdkManager = MistSdkManager()
+        mistSdkManager.getInstance(application)
+        val sdkCallbackHandler = SDKCallbackHandler(applicationContext)
+        mistSdkManager.init(constants.orgSecret,sdkCallbackHandler,sdkCallbackHandler,applicationContext)
+        mistSdkManager.startMistSDK()
         Log.d("TAG","SampleLocationApp: doWork() ThreadName: " + Thread.currentThread().name)
 
     }

@@ -1,6 +1,5 @@
 package com.example.samplebluedotindoorlocation.handler
 
-import android.content.ContentValues.TAG
 import android.content.Context
 import android.util.Log
 import com.example.samplebluedotindoorlocation.NotificationHandler
@@ -12,7 +11,7 @@ import com.mist.android.MistPoint
 import com.mist.android.MistVirtualBeacon
 import com.mist.android.VirtualBeaconCallback
 
-class SDKCallbackHandler(var context: Context) : VirtualBeaconCallback, IndoorLocationCallback {
+class SDKCallbackHandler(private var context: Context) : VirtualBeaconCallback, IndoorLocationCallback {
     /**
      * We need to implement this method as per our business logic. These methods will be called for IndoorLocationCallback
      * @param relativeLocation
@@ -20,7 +19,7 @@ class SDKCallbackHandler(var context: Context) : VirtualBeaconCallback, IndoorLo
     /**
      * Returns updated location of the mobile client (as a point (X, Y) measured in meters from the map origin, i.e., relative X, Y)
      */
-
+    private val TAG : String ="SampleLocationApp"
     private val notificationHandler=NotificationHandler()
     override fun onRelativeLocationUpdated(relativeLocation: MistPoint) {
         Log.v(TAG, "onRelativeLocationUpdated called")
@@ -35,7 +34,7 @@ class SDKCallbackHandler(var context: Context) : VirtualBeaconCallback, IndoorLo
     }
 
     override fun onError(errorType: ErrorType, errorMessage: String) {
-        Log.v(TAG, "onError called$errorMessage")
+        Log.v(TAG, "onError called $errorMessage")
         notificationHandler.sendNotification(context,errorMessage)
         /** Notifies the host application about any errors encountered  */
     }
