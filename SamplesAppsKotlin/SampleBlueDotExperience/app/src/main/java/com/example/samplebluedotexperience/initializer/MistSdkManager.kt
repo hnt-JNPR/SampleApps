@@ -17,7 +17,7 @@ class MistSdkManager{
      */
 
     private var indoorLocationManager: IndoorLocationManager?=null
-    private lateinit var indoorLocationCallback:IndoorLocationCallback
+    private var indoorLocationCallback:IndoorLocationCallback?=null
     private var virtualBeaconCallback: VirtualBeaconCallback?=null
     private lateinit var contextWeakReference: WeakReference<Context>
     private var sdkInitializer : MistSdkManager? = null

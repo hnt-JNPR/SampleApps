@@ -1,5 +1,6 @@
 package com.example.samplebluedotexperience.fragment
 
+import android.Manifest
 import android.app.AlertDialog
 import android.app.Application
 import android.bluetooth.BluetoothAdapter
@@ -13,7 +14,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.view.ViewTreeObserver
 import androidx.annotation.RequiresApi
-import androidx.core.content.ContextCompat
+import androidx.core.content.ContextCompat.checkSelfPermission
 import androidx.fragment.app.Fragment
 import com.example.samplebluedotexperience.databinding.MapFragmentBinding
 import com.example.samplebluedotexperience.initializer.MistSdkManager
@@ -35,6 +36,8 @@ class MapFragment : Fragment(), IndoorLocationCallback {
     val TAG = MapFragment::class.java.simpleName
 
     private var permissionRequestBluetoothLocation : Int = 1
+
+    private val permissionRequestBackgroundLocation : Int = 2
 
     private val requestEnableBluetooth : Int = 1
 
@@ -102,11 +105,15 @@ class MapFragment : Fragment(), IndoorLocationCallback {
     override fun onStart() {
         super.onStart()
         Log.d(TAG,"SampleBlueDot onStart called")
-        checkPermissionAndStartSDK()
+        //checkPermissionAndStartSDK()
+        if(checkPermissionAndStartSDK()){
+            startSDK(orgSecret)
+        }
     }
 
     override fun onDestroyView() {
         super.onDestroyView()
+        Log.d(TAG,"SampleBlueDot onDestroy called")
         //unbinder.unbind()
         _binding = null
         mistSdkManager.destroyMistSdk()
@@ -114,6 +121,7 @@ class MapFragment : Fragment(), IndoorLocationCallback {
 
     override fun onStop() {
         super.onStop()
+        Log.d(TAG,"SampleBlueDot onStop called")
         mistSdkManager.stopMistSdk()
     }
 
@@ -127,9 +135,9 @@ class MapFragment : Fragment(), IndoorLocationCallback {
             builder.setOnDismissListener {
                 //requestPermissions(permissionRequired.toArray() as Array<out String>, PERMISSION_REQUEST_BLUETOOTH_LOCATION)
                 val permissionToRequest =permissionRequired.filter {
-                    ContextCompat.checkSelfPermission(requireActivity(),it)!= PackageManager.PERMISSION_GRANTED }.toTypedArray()
+                    checkSelfPermission(requireActivity(),it)!= PackageManager.PERMISSION_GRANTED }.toTypedArray()
                 if(permissionToRequest.isNotEmpty()){
-                    requestPermissions(arrayOf(android.Manifest.permission.BLUETOOTH_CONNECT, android.Manifest.permission.BLUETOOTH_SCAN, android.Manifest.permission.ACCESS_FINE_LOCATION),permissionRequestBluetoothLocation)
+                    requestPermissions(arrayOf(Manifest.permission.BLUETOOTH_CONNECT, Manifest.permission.BLUETOOTH_SCAN,Manifest.permission.ACCESS_FINE_LOCATION),permissionRequestBluetoothLocation)
                 }
             }
             builder.show()
@@ -143,8 +151,10 @@ class MapFragment : Fragment(), IndoorLocationCallback {
                     if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                         Log.d(TAG, "fine location permission granted !!")
                         checkIfBluetoothEnabled()
-                        // Start the SDK when permissions are provided
-                        startSDK(orgSecret)
+                        if(checkBackgroundLocation()) {
+                            // Start the SDK when permissions are provided
+                            startSDK(orgSecret)
+                        }
                     } else {
                         val builder = AlertDialog.Builder(activity)
                         builder.setTitle("Functionality Limited")
@@ -153,12 +163,18 @@ class MapFragment : Fragment(), IndoorLocationCallback {
                         builder.setOnDismissListener{}
                         builder.show()
                     }
+
+                permissionRequestBackgroundLocation -> {
+                    if (grantResults[0] == PackageManager.PERMISSION_GRANTED){
+                        startSDK(orgSecret)
+                    }
+                }
             }
         }
     }
 
     private fun checkIfBluetoothEnabled() {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S && activity != null && requireActivity().checkSelfPermission(android.Manifest.permission.BLUETOOTH_CONNECT) != PackageManager.PERMISSION_GRANTED) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S && activity != null && requireActivity().checkSelfPermission(Manifest.permission.BLUETOOTH_CONNECT) != PackageManager.PERMISSION_GRANTED) {
             return
         }
         val bluetoothAdapter : BluetoothAdapter = BluetoothAdapter.getDefaultAdapter()
@@ -175,26 +191,40 @@ class MapFragment : Fragment(), IndoorLocationCallback {
     }
 
     @RequiresApi(Build.VERSION_CODES.S)
-    private fun checkPermissionAndStartSDK() {
+    private fun checkPermissionAndStartSDK() : Boolean {
         val permissionRequired : MutableList<String> = ArrayList()
-        if(activity!=null && requireActivity().checkSelfPermission(android.Manifest.permission.ACCESS_FINE_LOCATION)!= PackageManager.PERMISSION_GRANTED){
-            permissionRequired.add(android.Manifest.permission.ACCESS_FINE_LOCATION)
+        if(activity!=null && requireActivity().checkSelfPermission(Manifest.permission.ACCESS_FINE_LOCATION)!= PackageManager.PERMISSION_GRANTED){
+            permissionRequired.add(Manifest.permission.ACCESS_FINE_LOCATION)
         }
         // For API 31 we need BLUETOOTH_SCAN permission
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S && activity != null && requireActivity().checkSelfPermission(android.Manifest.permission.BLUETOOTH_SCAN) != PackageManager.PERMISSION_GRANTED) {
-            permissionRequired.add(android.Manifest.permission.BLUETOOTH_SCAN)
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S && activity != null && requireActivity().checkSelfPermission(Manifest.permission.BLUETOOTH_SCAN) != PackageManager.PERMISSION_GRANTED) {
+            permissionRequired.add(Manifest.permission.BLUETOOTH_SCAN)
         }
         // For API 31 we need BLUETOOTH_CONNECT permission
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S && activity != null && requireActivity().checkSelfPermission(android.Manifest.permission.BLUETOOTH_CONNECT) != PackageManager.PERMISSION_GRANTED) {
-            permissionRequired.add(android.Manifest.permission.BLUETOOTH_CONNECT)
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S && activity != null && requireActivity().checkSelfPermission(Manifest.permission.BLUETOOTH_CONNECT) != PackageManager.PERMISSION_GRANTED) {
+            permissionRequired.add(Manifest.permission.BLUETOOTH_CONNECT)
         }
         if(permissionRequired.size > 0){
             showLocationBluetoothPermissionDialog(permissionRequired)
         }
         else{
             checkIfBluetoothEnabled()
-            Log.d(TAG,"SampleBlueDot initMistSDK called")
-            startSDK(orgSecret)
+            if(checkBackgroundLocation()){
+                return true
+            }
+            //Log.d(TAG,"SampleBlueDot initMistSDK called")
+            //startSDK(orgSecret)
+        }
+        return false
+    }
+
+    private fun checkBackgroundLocation(): Boolean {
+        if(requireActivity().checkSelfPermission(Manifest.permission.ACCESS_BACKGROUND_LOCATION)!= PackageManager.PERMISSION_GRANTED){
+            requestPermissions(arrayOf(Manifest.permission.ACCESS_BACKGROUND_LOCATION), permissionRequestBackgroundLocation)
+            return false
+        }
+        else{
+            return true
         }
     }
 
