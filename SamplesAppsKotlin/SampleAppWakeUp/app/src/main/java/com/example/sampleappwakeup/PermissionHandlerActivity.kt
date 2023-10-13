@@ -33,6 +33,7 @@ open class PermissionHandlerActivity : AppCompatActivity(){
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S && checkSelfPermission(Manifest.permission.BLUETOOTH_CONNECT) != PackageManager.PERMISSION_GRANTED) {
             permissionRequired.add(Manifest.permission.BLUETOOTH_CONNECT)
         }
+
         if(permissionRequired.size > 0){
             showLocationBluetoothPermissionDialog(permissionRequired)
         }
@@ -74,7 +75,7 @@ open class PermissionHandlerActivity : AppCompatActivity(){
                 ContextCompat.checkSelfPermission(this, it) != PackageManager.PERMISSION_GRANTED
             }.toTypedArray()
             if (permissionToRequest.isNotEmpty()) {
-                requestPermissions(arrayOf(Manifest.permission.BLUETOOTH_CONNECT, Manifest.permission.BLUETOOTH_SCAN, Manifest.permission.ACCESS_FINE_LOCATION), permissionRequestBluetoothLocation)
+                requestPermissions(arrayOf(Manifest.permission.POST_NOTIFICATIONS,Manifest.permission.BLUETOOTH_CONNECT, Manifest.permission.BLUETOOTH_SCAN, Manifest.permission.ACCESS_FINE_LOCATION), permissionRequestBluetoothLocation)
             }
         }
         builder.show()

@@ -57,6 +57,7 @@ class MistSdkManager{
         }
     }
 
+    @Synchronized
     fun stopMistSdk(){
         if(indoorLocationManager!=null){
             indoorLocationManager?.stop()
@@ -70,6 +71,7 @@ class MistSdkManager{
         }
     }
 
+    @Synchronized
     private fun restartMistSdk() {
         if(indoorLocationManager!=null){
             stopMistSdk()

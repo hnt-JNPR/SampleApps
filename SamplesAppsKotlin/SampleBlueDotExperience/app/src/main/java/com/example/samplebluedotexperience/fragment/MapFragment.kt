@@ -144,6 +144,7 @@ class MapFragment : Fragment(), IndoorLocationCallback {
         }
     }
 
+    @Deprecated("Deprecated in Java")
     override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<out String>, grantResults: IntArray) {
         if (activity != null) {
             when (requestCode) {
@@ -336,8 +337,8 @@ class MapFragment : Fragment(), IndoorLocationCallback {
                     if (!scaleFactorCalled && (scaleXFactor == 0.0 || scaleYFactor == 0.0)) {
                         setupScaleFactorForFloorPlan()
                     }
-                    val leftMargin: Float = floorImageLeftMargin + (xPos - binding.floorplanbluedot.width) / 2
-                    val topMargin: Float = floorImageTopMargin + (yPos - binding.floorplanbluedot.height) / 2
+                    val leftMargin: Float = floorImageLeftMargin + (xPos - (binding.floorplanbluedot.width / 2))
+                    val topMargin: Float = floorImageTopMargin + (yPos - (binding.floorplanbluedot.height / 2))
                     binding.floorplanbluedot.x = leftMargin
                     binding.floorplanbluedot.y = topMargin
                 }
@@ -351,8 +352,8 @@ class MapFragment : Fragment(), IndoorLocationCallback {
             floorImageLeftMargin= binding.floorplanImage.left.toFloat()
             floorImageTopMargin = binding.floorplanImage.top.toFloat()
             if (binding.floorplanImage.drawable != null) {
-                scaleXFactor = binding.floorplanImage.width / binding.floorplanImage.drawable.intrinsicWidth.toDouble()
-                scaleYFactor = binding.floorplanImage.height / binding.floorplanImage.drawable.intrinsicHeight.toDouble()
+                scaleXFactor = binding.floorplanImage.width / (binding.floorplanImage.drawable.intrinsicWidth).toDouble()
+                scaleYFactor = binding.floorplanImage.height / (binding.floorplanImage.drawable.intrinsicHeight).toDouble()
                 scaleFactorCalled = true
             }
         }
@@ -363,13 +364,13 @@ class MapFragment : Fragment(), IndoorLocationCallback {
      * rendered in the imageview
      */
     private fun convertCloudPointToFloorPlanYScale(y: Double): Float {
-        return (y * scaleYFactor * currentMap.ppm).toFloat()
+        return (y * this.scaleYFactor * currentMap.ppm).toFloat()
     }
     /**
      * Converting the x point from meter's to pixel with the present scaling factor of the map
      * rendered in the imageview
      */
     private fun convertCloudPointToFloorPlanXScale(x: Double): Float {
-        return (x * scaleXFactor * currentMap.ppm).toFloat()
+        return (x * this.scaleXFactor * currentMap.ppm).toFloat()
     }
 }
