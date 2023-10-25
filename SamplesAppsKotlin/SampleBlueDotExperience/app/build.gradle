@@ -46,11 +46,13 @@ dependencies {
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.5.1'
 
     //Mist SDK implementation
-    implementation 'com.mist:core-sdk:3.0.3'
+    //implementation 'com.mist:core-sdk:3.0.3'
+    debugImplementation files('libs/android-framework.aar')
 
     //picasso
     // For image processing
     implementation 'com.squareup.picasso:picasso:2.5.2'
     implementation 'com.squareup.okhttp3:okhttp:4.10.0'
     implementation 'com.jakewharton.picasso:picasso2-okhttp3-downloader:1.1.0'
+
 }
