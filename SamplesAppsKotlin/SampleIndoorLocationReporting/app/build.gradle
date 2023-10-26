@@ -45,4 +45,10 @@ dependencies {
     //Mist SDK Maven Central  implementation
     //implementation 'com.mist:core-sdk:3.0.3'
     debugImplementation files('libs/android-framework.aar')
+
+    //For External SDK(.aar) file only
+    implementation  'com.neovisionaries:nv-websocket-client:2.14'
+    //noinspection GradleCompatible
+    implementation 'com.google.android.gms:play-services-location:21.0.1'
+    implementation 'com.google.code.gson:gson:2.8.2'
 }
