@@ -47,8 +47,13 @@ dependencies {
     androidTestImplementation 'androidx.test.ext:junit:1.1.5'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.5.1'
 
+    implementation 'com.google.guava:guava:31.1-jre'
+    implementation 'com.alibaba:fastjson:2.0.28'
+
     //implementation 'com.mist:core-sdk:3.0.3'
-    debugImplementation files('libs/android-framework.aar')
+    implementation files('libs/android-framework.aar')
+    implementation 'com.neovisionaries:nv-websocket-client:2.14'
+    api fileTree(include: ['*.jar'], dir: 'libs')
 
     /*
     implementation 'com.jakewharton:butterknife:10.2.3'
@@ -62,9 +67,8 @@ dependencies {
     implementation 'com.squareup.okhttp3:okhttp:4.10.0'
     implementation 'com.jakewharton.picasso:picasso2-okhttp3-downloader:1.1.0'
 
-    //For External SDK(.aar) file only
-    implementation  'com.neovisionaries:nv-websocket-client:2.14'
     //noinspection GradleCompatible
     implementation 'com.google.android.gms:play-services-location:21.0.1'
+    implementation 'com.google.android.gms:play-services-maps:18.1.0'
     implementation 'com.google.code.gson:gson:2.8.2'
 }
