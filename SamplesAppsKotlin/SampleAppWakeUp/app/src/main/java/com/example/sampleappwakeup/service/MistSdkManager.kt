@@ -40,7 +40,7 @@ class MistSdkManager {
             this.indoorLocationCallback = indoorLocationCallback
             this.virtualBeaconCallback = virtualBeaconCallback
         } else {
-            this.contextWeakReference=WeakReference<Context>(context)
+            //this.contextWeakReference=WeakReference<Context>(context)
             Toast.makeText(contextWeakReference?.get(), "Org Secret not present", Toast.LENGTH_SHORT).show()
         }
     }

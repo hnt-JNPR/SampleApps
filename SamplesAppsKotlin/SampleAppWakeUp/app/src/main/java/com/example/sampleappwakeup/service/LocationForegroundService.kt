@@ -12,6 +12,7 @@ import android.os.IBinder
 import androidx.core.app.NotificationCompat
 import com.example.sampleappwakeup.Constants
 import com.example.sampleappwakeup.MainActivity
+import com.example.sampleappwakeup.R
 
 /**
  * LocationForegroundService
@@ -42,9 +43,11 @@ class LocationForegroundService : Service() {
             } else {
                 PendingIntent.getActivity(this, 0, intent1, PendingIntent.FLAG_UPDATE_CURRENT)
             }
-            val notification = NotificationCompat.Builder(this, "ChannelId1")
-                .setContentTitle("Sample Location and Bluedot  App")
-                .setContentText("Location App  is running !!").setContentIntent(pendingIntent)
+            val notification = NotificationCompat.Builder(this, "ChannelId3")
+                .setContentTitle("Sample App Wakeup")
+                .setContentText("location sdk running")
+                .setSmallIcon(R.drawable.ic_launcher_foreground)
+                .setContentIntent(pendingIntent)
                 .build()
             startForeground(fgServiceNotificationId, notification, ServiceInfo.FOREGROUND_SERVICE_TYPE_DATA_SYNC)
             startSdk(constants.orgSecret)
@@ -90,6 +93,5 @@ class LocationForegroundService : Service() {
         mistSdkManager.getInstance(application as Application)
         mistSdkManager.destroy()
     }
-
 
 }
