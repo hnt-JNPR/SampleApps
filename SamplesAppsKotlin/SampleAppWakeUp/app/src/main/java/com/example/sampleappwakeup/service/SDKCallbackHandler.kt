@@ -28,7 +28,6 @@ class SDKCallbackHandler(private var context: Context) : VirtualBeaconCallback, 
     private val altBeaconUtil = AltBeaconUtil()
     private val constants = Constants()
     private val mainApplication = MainApplication()
-    //val MistSdkManager = MistSdkManager()
 
     private val TAG : String = "SampleWakeUpApp"
 

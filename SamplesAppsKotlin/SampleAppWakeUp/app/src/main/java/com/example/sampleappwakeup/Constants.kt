@@ -5,11 +5,11 @@ class Constants {
      * Provide SDK token in ORG_SECRET,
      * we can get org secret from MIST UI (Organization —> Mobile SDK)
      */
-    val orgSecret : String = "SrEUGv0F6aC-RFhGKVUne4v4afAhiqJ5"
+    val orgSecret : String = ""
     /**
      * Provide orgId for alt beacon scanning here
      */
-    val orgId : String = "6748cfa6-4e12-11e6-9188-0242ac110007"
+    val orgId : String = ""
 
     val noVBLETimeMs : Long = 5 * 60 * 1000
 
