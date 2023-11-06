@@ -6,7 +6,7 @@ When app is not in foreground it runs the Mist SDK as a foreground service.
 ## Prerequisites
 
 For running this application you need SDK Token, which can be obtained from the Mist Portal (Organization —> Mobile SDK)
-Provide this value in Constants.java
+Provide this value in Constants.kt
 
 
 ### Permission required for this app

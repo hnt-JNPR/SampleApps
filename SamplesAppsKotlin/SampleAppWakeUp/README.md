@@ -14,7 +14,7 @@ We also need to make sure that App wakeup functionality is enabled in Mist Porta
 
 Get the orgId from Mist Portal and set it in MainApplication class for defining regions for alt beacon monitoring.
 
-Provide these values in Constants.java file 
+Provide these values in Constants.kt file 
 
 ### Permission required for this app
 

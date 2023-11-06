@@ -5,7 +5,7 @@ In this App we create background services which uses Mist core SDK to provide in
 ## Prerequisites
 
 For running this application you need SDK Token, which can be obtained from the Mist Portal (Organization —> Mobile SDK)
-Provide this value in Constants.java
+Provide this value in Constants.kt
 
 ### Permission required for this app
 
