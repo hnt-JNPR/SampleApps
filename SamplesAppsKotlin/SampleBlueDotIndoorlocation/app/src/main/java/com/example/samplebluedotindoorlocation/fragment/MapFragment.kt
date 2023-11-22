@@ -57,9 +57,7 @@ class MapFragment : Fragment(),IndoorLocationCallback {
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
-        //val view:View=inflater.inflate(R.layout.map_fragment,container,false)
         _binding = MapFragmentBinding.inflate(inflater,container,false)
-        //unbinder = ButterKnife.bind(this,view)
         binding.progressBar.visibility=View.VISIBLE
         return(binding.root)
     }
@@ -70,7 +68,7 @@ class MapFragment : Fragment(),IndoorLocationCallback {
             mainApplication = requireActivity().application
         }
         if (arguments != null) {
-            orgSecret = requireArguments().getString(sdkToken)!!
+            orgSecret = requireArguments().getString(sdkToken).toString()
         }
         mistSdkManager.getInstance(mainApplication.applicationContext)
     }
@@ -83,7 +81,6 @@ class MapFragment : Fragment(),IndoorLocationCallback {
 
     override fun onDestroyView() {
         super.onDestroyView()
-        //unbinder.unbind()
         _binding = null
         mistSdkManager.destroy()
     }
@@ -95,9 +92,7 @@ class MapFragment : Fragment(),IndoorLocationCallback {
 
     private fun startSDK(orgSecret: String?) {
         Log.d(TAG, "SampleBlueDot startSdk called $orgSecret")
-
         mainApplication = requireActivity().application
-
         if(orgSecret!=null){
             mistSdkManager.init(orgSecret,this,null,mainApplication.applicationContext)
             mistSdkManager.startMistSDK()

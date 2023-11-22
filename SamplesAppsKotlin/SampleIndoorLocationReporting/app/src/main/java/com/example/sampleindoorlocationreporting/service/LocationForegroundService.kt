@@ -53,7 +53,6 @@ class LocationForegroundService : Service() {
         if (orgSecret != null) {
             val mistSdkManager= MistSdkManager()
             mistSdkManager.getInstance(applicationContext)
-            //mistSdkManager?.getInstance(applicationContext)
             val sdkCallbackHandler = SDKCallbackHandler(applicationContext)
             mistSdkManager.init(orgSecret, sdkCallbackHandler, sdkCallbackHandler,applicationContext)
             mistSdkManager.startMistSDK()

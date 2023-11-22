@@ -35,12 +35,11 @@ class MainApplication : Application(), MonitorNotifier {
     }
 
     fun getApplication() : MainApplication {
-        //mainApplication = this
         return mainApplication
     }
 
-    override fun didEnterRegion(region: Region?) {
-        if(!region?.uniqueId?.contains("wakeup-beacons")!!){
+    override fun didEnterRegion(region: Region) {
+        if(!region.uniqueId.contains("wakeup-beacons")){
             return
         }
         Log.i(TAG,"Found beacon " + region.uniqueId)
@@ -55,8 +54,8 @@ class MainApplication : Application(), MonitorNotifier {
         }
     }
 
-    override fun didExitRegion(region: Region?) {
-        if(!region?.uniqueId?.contains("wakeup-beacons")!!){
+    override fun didExitRegion(region: Region) {
+        if(!region.uniqueId.contains("wakeup-beacons")){
             return
         }
         Log.i(TAG,"Lost beacon")

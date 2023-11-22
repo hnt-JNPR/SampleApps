@@ -21,7 +21,6 @@ import com.mist.android.VirtualBeaconCallback
  * from Mist SDK
  */
 class SDKCallbackHandler(private var context: Context) : VirtualBeaconCallback, IndoorLocationCallback {
-    //private lateinit var context : Context
     private var lastFailedTime : Long = 0
     private var failedCount : Long = 0
     private val notificationHandler = NotificationHandler()

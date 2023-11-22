@@ -27,9 +27,7 @@ class MistSdkManager {
 
     fun getInstance(context: Context): MistSdkManager {
         contextWeakReference = WeakReference<Context>(context)
-        //if (mistSdkManager == null) {
-            mistSdkManager = MistSdkManager()
-        //}
+        mistSdkManager = MistSdkManager()
         return mistSdkManager
     }
 
@@ -59,13 +57,13 @@ class MistSdkManager {
 
     private fun stopMistSDK() {
         if (indoorLocationManager != null) {
-            indoorLocationManager!!.stop()
+            indoorLocationManager?.stop()
         }
     }
 
     fun destroy() {
         if (indoorLocationManager != null) {
-            indoorLocationManager!!.stop()
+            indoorLocationManager?.stop()
             indoorLocationManager = null
         }
     }
@@ -74,8 +72,8 @@ class MistSdkManager {
     fun restartMistSDK() {
         if (indoorLocationManager != null) {
             stopMistSDK()
-            indoorLocationManager!!.setVirtualBeaconCallback(virtualBeaconCallback)
-            indoorLocationManager!!.start(indoorLocationCallback)
+            indoorLocationManager?.setVirtualBeaconCallback(virtualBeaconCallback)
+            indoorLocationManager?.start(indoorLocationCallback)
         }
     }
 }

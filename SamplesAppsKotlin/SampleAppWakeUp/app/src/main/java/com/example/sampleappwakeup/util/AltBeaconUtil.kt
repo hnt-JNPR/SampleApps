@@ -32,7 +32,6 @@ class AltBeaconUtil {
         } else{
             PendingIntent.getActivity(context, 0, intent1, PendingIntent.FLAG_UPDATE_CURRENT )
         }
-        /** Create foreground service for alt beacon scanning. */
         /** Create foreground service for alt beacon scanning.  */
         val notification: Notification = NotificationCompat.Builder(context, "ChannelId2").setContentTitle("Sample App Wakeup")
                 .setContentText("Alt beacon scan service running")

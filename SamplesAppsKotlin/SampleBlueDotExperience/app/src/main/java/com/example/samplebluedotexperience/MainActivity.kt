@@ -12,7 +12,6 @@ class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityMainBinding.inflate(layoutInflater)
-        //setContentView(R.layout.activity_main)
         setContentView(binding.root)
 
         // Load BlueDot Map screen in fragment, permissions are checked inside this fragment.

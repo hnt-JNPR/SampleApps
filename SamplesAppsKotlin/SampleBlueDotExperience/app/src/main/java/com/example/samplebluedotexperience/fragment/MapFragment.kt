@@ -82,9 +82,7 @@ class MapFragment : Fragment(), IndoorLocationCallback {
      */
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
-        //val view:View=inflater.inflate(R.layout.map_fragment,container,false)
         _binding = MapFragmentBinding.inflate(inflater,container,false)
-        //unbinder = ButterKnife.bind(this,view)
         binding.progressBar.visibility= View.VISIBLE
         return binding.root
     }
@@ -95,7 +93,7 @@ class MapFragment : Fragment(), IndoorLocationCallback {
             mainApplication = requireActivity().application
         }
         if (arguments != null) {
-            orgSecret = requireArguments().getString(sdkToken)!!
+            orgSecret = requireArguments().getString(sdkToken).toString()
         }
         mistSdkManager.getInstance(mainApplication.applicationContext)
     }
@@ -105,7 +103,6 @@ class MapFragment : Fragment(), IndoorLocationCallback {
     override fun onStart() {
         super.onStart()
         Log.d(TAG,"SampleBlueDot onStart called")
-        //checkPermissionAndStartSDK()
         if(checkPermissionAndStartSDK()){
             startSDK(orgSecret)
         }
@@ -114,7 +111,6 @@ class MapFragment : Fragment(), IndoorLocationCallback {
     override fun onDestroyView() {
         super.onDestroyView()
         Log.d(TAG,"SampleBlueDot onDestroy called")
-        //unbinder.unbind()
         _binding = null
         mistSdkManager.destroyMistSdk()
     }
@@ -133,7 +129,6 @@ class MapFragment : Fragment(), IndoorLocationCallback {
             builder.setMessage("Please grant bluetooth/location access so this app can detect beacons in the background")
             builder.setPositiveButton(android.R.string.ok, null)
             builder.setOnDismissListener {
-                //requestPermissions(permissionRequired.toArray() as Array<out String>, PERMISSION_REQUEST_BLUETOOTH_LOCATION)
                 val permissionToRequest =permissionRequired.filter {
                     checkSelfPermission(requireActivity(),it)!= PackageManager.PERMISSION_GRANTED }.toTypedArray()
                 if(permissionToRequest.isNotEmpty()){
@@ -213,8 +208,6 @@ class MapFragment : Fragment(), IndoorLocationCallback {
             if(checkBackgroundLocation()){
                 return true
             }
-            //Log.d(TAG,"SampleBlueDot initMistSDK called")
-            //startSDK(orgSecret)
         }
         return false
     }

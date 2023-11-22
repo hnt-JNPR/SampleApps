@@ -89,7 +89,6 @@ class MainActivity : AppCompatActivity() {
      */
     private fun showLocationBluetoothPermissionDialog(permissionRequired: ArrayList<String>) {
         val builder = AlertDialog.Builder(this)
-        //val array: Array<String> = permissionRequired.toArray() as Array<String>
         builder.setTitle("This app needs bluetooth and location permission")
         builder.setMessage("Please grant bluetooth/location access so this app can detect beacons in the background")
         builder.setPositiveButton(android.R.string.ok, null)

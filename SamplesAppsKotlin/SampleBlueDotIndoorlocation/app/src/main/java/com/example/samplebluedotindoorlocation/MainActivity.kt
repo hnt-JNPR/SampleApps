@@ -50,7 +50,6 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun setUpMapFragment(orgSecret: String) {
-        //val MapFragment = MapFragment()
         val mapFragment : Fragment? = supportFragmentManager.findFragmentByTag(MapFragment().TAG)
         if(mapFragment == null){
             supportFragmentManager.beginTransaction().replace(R.id.frame_fragment,MapFragment().newInstance(orgSecret),MapFragment().TAG).addToBackStack(MapFragment().TAG).commit()
@@ -95,7 +94,6 @@ class MainActivity : AppCompatActivity() {
     @RequiresApi(Build.VERSION_CODES.S)
     private fun showLocationBluetoothPermissionDialog(permissionRequired: ArrayList<String>) {
         val builder = AlertDialog.Builder(this)
-        //val array: Array<String> = permissionRequired.toArray() as Array<String>
         builder.setTitle("This app needs bluetooth and location permission")
         builder.setMessage("Please grant bluetooth/location access so this app can detect beacons in the background")
         builder.setPositiveButton(android.R.string.ok, null)

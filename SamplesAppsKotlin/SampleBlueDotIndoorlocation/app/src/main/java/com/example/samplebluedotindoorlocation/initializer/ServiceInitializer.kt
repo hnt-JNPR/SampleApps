@@ -9,9 +9,6 @@ import com.example.samplebluedotindoorlocation.service.LocationForegroundService
 
 class ServiceInitializer {
 
-    /* Define your SDK job ID here.*/
-    //public final val MIST_SDK_JOB_ID : Int =789
-
     fun startLocationService(context : Context){
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
             startMistForegroundService(context)
@@ -34,6 +31,5 @@ class ServiceInitializer {
         startForegroundService(context, intent)
 
     }
-
 
 }

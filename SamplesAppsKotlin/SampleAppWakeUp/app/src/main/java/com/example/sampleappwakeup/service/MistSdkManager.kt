@@ -40,7 +40,6 @@ class MistSdkManager {
             this.indoorLocationCallback = indoorLocationCallback
             this.virtualBeaconCallback = virtualBeaconCallback
         } else {
-            //this.contextWeakReference=WeakReference<Context>(context)
             Toast.makeText(contextWeakReference?.get(), "Org Secret not present", Toast.LENGTH_SHORT).show()
         }
     }
@@ -59,13 +58,13 @@ class MistSdkManager {
 
     fun stopMistSDK() {
         if (indoorLocationManager != null) {
-            indoorLocationManager!!.stop()
+            indoorLocationManager?.stop()
         }
     }
 
     fun destroy() {
         if (indoorLocationManager != null) {
-            indoorLocationManager!!.stop()
+            indoorLocationManager?.stop()
             indoorLocationManager = null
         }
     }
@@ -74,8 +73,8 @@ class MistSdkManager {
     fun restartMistSDK() {
         if (indoorLocationManager != null) {
             stopMistSDK()
-            indoorLocationManager!!.setVirtualBeaconCallback(virtualBeaconCallback)
-            indoorLocationManager!!.start(indoorLocationCallback)
+            indoorLocationManager?.setVirtualBeaconCallback(virtualBeaconCallback)
+            indoorLocationManager?.start(indoorLocationCallback)
         }
     }
 }
