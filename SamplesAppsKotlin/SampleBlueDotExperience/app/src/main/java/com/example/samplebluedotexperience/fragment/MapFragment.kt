@@ -319,6 +319,7 @@ class MapFragment : Fragment(), IndoorLocationCallback {
 
     private fun renderBlueDot(point : MistPoint?) {
         binding.floorplanImage.visibility = View.VISIBLE
+        binding.floorplanbluedot.visibility = View.VISIBLE
         if(activity!=null){
             requireActivity().runOnUiThread {
                 if (binding.floorplanImage.drawable != null && point != null && addedMap) {
